@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Assistant - Global Customization Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0B0F19;
+            --card-bg: rgba(20, 26, 46, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-glow: linear-gradient(135deg, #6366F1, #8B5CF6);
+            --accent-glow: linear-gradient(135deg, #10B981, #3B82F6);
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --text-muted: #6B7280;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
+        }
+
+        header {
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.05em;
+            background: linear-gradient(90deg, #8B5CF6, #6366F1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #8B5CF6;
+            box-shadow: 0 0 12px #8B5CF6;
+        }
+
+        .project-tag {
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 16px;
+            border-radius: 99px;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        /* Presentation Container */
+        .presentation-container {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .slide-deck {
+            width: 100%;
+            max-width: 1100px;
+            height: 100%;
+            max-height: 600px;
+            position: relative;
+            perspective: 1500px;
+        }
+
+        /* Slides styling */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.95) rotateY(15deg);
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1) rotateY(0deg);
+            pointer-events: auto;
+            z-index: 5;
+        }
+
+        .slide.prev {
+            opacity: 0;
+            transform: scale(0.95) translate3d(-100%, 0, -200px) rotateY(-15deg);
+        }
+
+        .slide.next {
+            opacity: 0;
+            transform: scale(0.95) translate3d(100%, 0, -200px) rotateY(15deg);
+        }
+
+        /* Content elements styling */
+        .slide-subtitle {
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: #8B5CF6;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slide-subtitle::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #8B5CF6;
+        }
+
+        .slide-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+            line-height: 1.2;
+            color: var(--text-primary);
+        }
+
+        .slide-body {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .highlight {
+            color: #A78BFA;
+            font-weight: 600;
+        }
+
+        /* Lists and Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bullet-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }
+
+        .bullet-list li::before {
+            content: "✦";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #8B5CF6;
+        }
+
+        .code-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.95rem;
+            color: #A78BFA;
+            margin-top: 12px;
+            overflow-x: auto;
+        }
+
+        /* Footer & Controls */
+        footer {
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .slide-counter {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-control:hover {
+            background: var(--primary-glow);
+            border-color: transparent;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+            transform: scale(1.05);
+        }
+
+        .btn-control svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .progress-bar-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 10;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6366F1, #8B5CF6);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Icons */
+        .icon-accent {
+            color: #10B981;
+        }
+        .icon-purple {
+            color: #8B5CF6;
+        }
+        
+        /* Intro slide specific */
+        .title-slide {
+            text-align: center;
+            align-items: center;
+        }
+        .title-slide h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #FFF 30%, #A78BFA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .title-slide p {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <div class="logo-dot"></div>
+            Gemini Assistant
+        </div>
+        <div class="project-tag">Chuyển Giao Công Nghệ &amp; Tối Ưu Quy Trình</div>
+    </header>
+
+    <div class="presentation-container">
+        <div class="slide-deck">
+            
+            <!-- Slide 1: Welcome -->
+            <div class="slide active title-slide">
+                <span class="slide-subtitle">Giới Thiệu Giải Pháp</span>
+                <h1>Cấu Hình Toàn Cục (Global Customization) cho AI Assistant</h1>
+                <p class="slide-body">
+                    Làm thế nào để đội ngũ phát triển đồng bộ hóa các quy chuẩn lập trình, convention dự án 
+                    và kích hoạt năng lực đặc thù (Skills) của AI trên <span class="highlight">tất cả các project</span> mà không cần copy cấu hình lặp đi lặp lại.
+                </p>
+            </div>
+
+            <!-- Slide 2: The Problem -->
+            <div class="slide">
+                <span class="slide-subtitle">Vấn Đề Thực Tế</span>
+                <h2 class="slide-title">Khó khăn khi làm việc đa dự án</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title">
+                            <span class="icon-accent">✕</span> Phân mảnh cấu hình
+                        </div>
+                        <p class="slide-body" style="font-size: 0.95rem;">
+                            Mỗi khi tạo dự án mới (P1115, P1062,...) hoặc clone repository mới, lập trình viên phải copy thủ công thư mục cấu hình <code>.agents/</code> để AI hiểu context.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">
+                            <span class="icon-accent">✕</span> Không nhất quán
+                        </div>
+                        <p class="slide-body" style="font-size: 0.95rem;">
+                            Khi cập nhật quy chuẩn viết code (ví dụ: bổ sung cách viết plugin, observer, data patch), việc cập nhật thủ công từng thư mục <code>.agents</code> ở các dự án rất dễ gây thiếu sót.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Principles -->
+            <div class="slide">
+                <span class="slide-subtitle">Nguyên Lý Hoạt Động</span>
+                <h2 class="slide-title">Cơ chế Nạp Cấu Hình 2 Cấp Độ</h2>
+                <p class="slide-body" style="margin-bottom: 20px;">
+                    AI Assistant hỗ trợ nạp các quy tắc và kỹ năng theo độ ưu tiên từ chung đến riêng:
+                </p>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title">
+                            <span class="icon-purple">➊</span> Phân vùng Toàn cục (Global)
+                        </div>
+                        <p class="slide-body" style="font-size: 0.95rem;">
+                            Đặt tại <code>/home/bss/.gemini/config/</code>.<br>
+                            Được nạp cho <strong>mọi dự án</strong> mở trên máy. Thích hợp cho các quy chuẩn chung, convention code framework, git commit template và kỹ năng dùng chung (như sinh code Magento).
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">
+                            <span class="icon-purple">➋</span> Phân vùng Dự án (Local)
+                        </div>
+                        <p class="slide-body" style="font-size: 0.95rem;">
+                            Đặt tại thư mục <code>.agents/</code> của dự án.<br>
+                            Chỉ có hiệu lực cho dự án hiện hành. Thích hợp cho các cấu hình môi trường cụ thể, đường dẫn hoặc tài liệu hướng dẫn độc quyền của dự án đó.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Setting up Global Config -->
+            <div class="slide">
+                <span class="slide-subtitle">Hướng Dẫn Cài Đặt</span>
+                <h2 class="slide-title">Các bước cấu hình Global</h2>
+                <p class="slide-body">
+                    Sao chép các file cấu hình và thư mục kỹ năng vào đúng đường dẫn toàn cục:
+                </p>
+                <ul class="bullet-list">
+                    <li>
+                        <strong>Quy chuẩn & Nguyên tắc (AGENTS.md):</strong> Đặt tại <code>/home/bss/.gemini/config/AGENTS.md</code>
+                    </li>
+                    <li>
+                        <strong>Thư mục Kỹ năng (Skills):</strong> Copy các thư mục skill tự định nghĩa vào trong <code>/home/bss/.gemini/config/skills/</code>. Ví dụ:
+                        <div class="code-box">/home/bss/.gemini/config/skills/magento-generate-dev/</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Slide 5: Best Practices -->
+            <div class="slide">
+                <span class="slide-subtitle">Kinh Nghiệm Thực Tế</span>
+                <h2 class="slide-title">Cách phân bổ Rule tối ưu nhất</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title">
+                            <span class="icon-purple">✦</span> Đưa vào Global config
+                        </div>
+                        <p class="slide-body" style="font-size: 0.95rem;">
+                            - Các quy định giao tiếp (Tiếng Việt ngắn gọn, comment code tiếng Anh).<br>
+                            - Quy chuẩn Git Commit Message chung.<br>
+                            - Kỹ năng sinh code Magento 2 và WebPOS framework (vì dự án nào của team cũng dùng).
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">
+                            <span class="icon-purple">✦</span> Đưa vào Local config (.agents/)
+                        </div>
+                        <p class="slide-body" style="font-size: 0.95rem;">
+                            - Các quy định đặc thù về phân quyền, thông tin phân nhánh của dự án cụ thể.<br>
+                            - API key cấu hình local hoặc các file hướng dẫn deploy dành riêng cho server kiểm thử của dự án đó.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 6: Summary -->
+            <div class="slide">
+                <span class="slide-subtitle">Kết Quả Đạt Được</span>
+                <h2 class="slide-title">Lợi ích mang lại cho toàn Đội Ngũ</h2>
+                <ul class="bullet-list" style="margin-top: 10px;">
+                    <li><strong>Tiết kiệm thời gian:</strong> Developer chỉ cần cấu hình môi trường máy trạm một lần duy nhất.</li>
+                    <li><strong>Đảm bảo tính nhất quán:</strong> Code sinh ra từ AI luôn tuân thủ đúng PSR-12, Magento Coding Standards dù dev đang làm ở bất kỳ repo nào.</li>
+                    <li><strong>Dễ dàng chia sẻ:</strong> Chỉ cần đóng gói thư mục <code>config/</code> toàn cục gửi cho thành viên mới để họ bắt đầu làm việc hiệu quả ngay lập tức.</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <div class="slide-counter">Slide 1 / 6</div>
+        <div class="controls">
+            <button class="btn-control" id="prevBtn" title="Slide trước">
+                <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <button class="btn-control" id="nextBtn" title="Slide sau">
+                <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </button>
+        </div>
+    </footer>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const counter = document.querySelector('.slide-counter');
+        const progressBar = document.getElementById('progressBar');
+        let currentSlide = 0;
+
+        function updateSlides() {
+            slides.forEach((slide, idx) => {
+                slide.classList.remove('active', 'prev', 'next');
+                if (idx === currentSlide) {
+                    slide.classList.add('active');
+                } else if (idx < currentSlide) {
+                    slide.classList.add('prev');
+                } else {
+                    slide.classList.add('next');
+                }
+            });
+
+            // Update Counter
+            counter.textContent = `Slide ${currentSlide + 1} / ${slides.length}`;
+
+            // Update Progress Bar
+            const percent = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${percent}%`;
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlides();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            } else if (e.key === 'ArrowRight' && currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlides();
+            }
+        });
+
+        // Initialize progress
+        updateSlides();
+    </script>
+</body>
+</html>

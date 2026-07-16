@@ -1,7 +1,8 @@
-1. Chuẩn hoá input cho AI (Repo Brain)
+# Chuẩn hoá input cho AI (Repo Brain)
+
 Tạo 3 file sống cùng repo (cực kỳ quan trọng): đặt trong thư mục docs/
 
-1.1 SYSTEM.md
+## SYSTEM.md
 
 Mô tả hệ thống ở mức kiến trúc, không code.
 
@@ -14,7 +15,7 @@ This is an offline-first POS system.
 - Data consistency > real-time freshness.
 - Snapshot + delta sync model.
 
-1.2 INVARIANTS.md
+## INVARIANTS.md
 
 Những luật không được phá.
 
@@ -23,7 +24,7 @@ Những luật không được phá.
 - Offline sales must never be rejected due to missing data.
 - Sync must be resumable and idempotent.
 
-1.3 SYNC_SPEC.md
+## SYNC_SPEC.md
 
 Spec bằng tiếng người, không PHP, không React.
 
@@ -40,17 +41,18 @@ Strategy:
 - Client downloads snapshot in parts.
 - Client applies deltas incrementally.
 
-2. Link các file quan trọng vào trong README.md
+# Link các file quan trọng vào trong README.md
 ## System Design
 - docs/system.md – High-level system architecture
 - docs/invariants.md – Non-negotiable system rules
 - docs/sync_spec.md – POS sync strategy (snapshot + delta)
 
-3. Đổi cách "prompt" → Agent Task
-# Thay vì viết: 
+# Đổi cách "prompt" → Agent Task
+
+## Thay vì viết: 
     "Hãy viết code sync catalogrule"
 
-# Hãy dùng task dạng agent:
+## Hãy dùng task dạng agent:
     You are an AI engineer inside this repo.
 
     Task:
@@ -63,7 +65,7 @@ Strategy:
     - Tables to keep / drop
     - Risk analysis
 
-3.1 TASK_SYNC_CATALOG.md
+## TASK_SYNC_CATALOG.md
 
 Title: Sync Catalog to POS
 
@@ -81,7 +83,7 @@ Constraints:
 - Handle network errors gracefully
 - Idempotent operation
 
-3.2 TASK_SYNC_ORDERS.md
+## TASK_SYNC_ORDERS.md
 
 Title: Sync Orders to Magento
 
@@ -98,7 +100,7 @@ Constraints:
 - Keep client-side orders until server confirms
 - Handle duplicate detection
 
-4. Agent Loop (trái tim của Antigravity)
+# Agent Loop (trái tim của Antigravity)
 Mỗi task luôn chạy vòng này:
 
 Read
@@ -138,8 +140,8 @@ bạn review diff + logic
 Bạn không nhảy vào giữa vòng.
 Bạn chỉ xuất hiện ở bước 5.
 
-5. Ví dụ task đúng kiểu Antigravity (rất quan trọng)
-# TASK: POS Sync Engine
+# Ví dụ task đúng kiểu Antigravity (rất quan trọng)
+## TASK: POS Sync Engine
 Context:
 - Magento backend
 - ReactJS POS client
@@ -158,7 +160,7 @@ Deliverables:
 - Part format
 - Pseudocode for client sync engine
 
-6. Chia nhỏ task theo chiều trí tuệ, không theo file
+# Chia nhỏ task theo chiều trí tuệ, không theo file
 Sai lầm phổ biến:
 
 “Viết file A, rồi file B”
@@ -175,7 +177,7 @@ Task 4: implement
 
 AI cực mạnh ở thiết kế tầng logic, đừng bắt nó làm việc tay chân trước.
 
-7. Review như kiến trúc sư, không như coder
+# Review như kiến trúc sư, không như coder
 Khi AI trả code, bạn không hỏi:
 
 đúng syntax chưa?
@@ -190,7 +192,7 @@ mất mạng ở giữa thì sao?
 
 10 POS sync cùng lúc có chết DB không?
 
-8. Dấu hiệu bạn đã làm đúng Antigravity-style
+# Dấu hiệu bạn đã làm đúng Antigravity-style
 Bạn biết mình đi đúng hướng khi:
 
 AI chủ động đề xuất
