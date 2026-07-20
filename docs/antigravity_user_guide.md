@@ -61,3 +61,21 @@ Sau khi AI hoàn thành việc viết code và tự viết nhật ký thay đổ
   - Chạy lệnh `git status` và `git add .` để gom tất cả file chỉnh sửa.
   - Tự động tạo Git commit với message chuẩn hóa lấy từ Git branch hiện tại theo quy định tại `AGENTS.md`: 
     `{Fix/Feat} [{mã dự án} - {issue id}]: {tên ticket}`
+
+---
+
+## CÁC MẸO NÂNG CAO ĐỂ TỐI ƯU HÓA HIỆU SUẤT (ADVANCED TIPS)
+
+Để nâng cao hơn nữa hiệu suất làm việc và tận dụng tối đa sức mạnh của AI, hãy áp dụng các mẹo sau:
+
+### 1. Sử dụng `/grill-me` để chốt kế hoạch nhanh
+Khi giao một task lớn phức tạp, bạn hãy gõ `/grill-me` ở cuối yêu cầu chat. AI sẽ đặt câu hỏi phỏng vấn ngắn gọn (3-5 câu hỏi trắc nghiệm) để làm rõ ý đồ thiết kế trước khi sinh file Plan, giúp tiết kiệm thời gian sửa đổi kế hoạch.
+
+### 2. Sử dụng `/learn` để ghi nhớ bài học debug
+Sau khi giải quyết xong một lỗi cấu hình khó hoặc thống nhất một cách viết code mới, hãy gõ lệnh `/learn`. AI sẽ đúc rút kinh nghiệm và cập nhật trực tiếp vào bộ kỹ năng `my-skills/` global để áp dụng tự động cho mọi dự án sau này.
+
+### 3. Tích hợp chạy Test tự động (Automated Verification)
+Khi duyệt kế hoạch viết code, bạn có thể yêu cầu AI bổ sung các script test tự động bằng command line (như `npm run test` hoặc `bin/magento dev:tests:run`). AI sẽ chạy thử và đính kèm kết quả pass/fail trực tiếp vào `walkthrough.md`.
+
+### 4. Tạo Git Branch phụ để thử nghiệm an toàn
+Đối với các tính năng có tính rủi ro cao, bạn có thể yêu cầu: *"Tạo cho tôi một branch Git phụ và thử nghiệm phương án X ở đó"*. AI sẽ tự lập nhánh mới để thử nghiệm code, giúp bảo vệ code sạch của branch chính.
