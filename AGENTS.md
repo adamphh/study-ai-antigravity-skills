@@ -57,3 +57,6 @@
 # Custom Rules
 - Đặt tên file plan theo định dạng: `{mã dự án}-{mã issue}_v1.0.md` trong đó mã dự án và mã issue lấy từ git branch.
 - **Ngôn ngữ giao tiếp:** Luôn giao tiếp bằng tiếng Việt (Vietnamese).
+- **Tự động hóa phỏng vấn khi lập kế hoạch (Proactive Planning):** Đối với các task phức tạp hoặc thiếu thông tin thiết kế, AI không cần đợi lệnh `/grill-me`. AI phải chủ động đặt 2-4 câu hỏi làm rõ các điểm nghi vấn ngay trong bước lập kế hoạch để thống nhất với lập trình viên trước khi bắt đầu code.
+- **Bắt buộc tự động chạy test và xác minh (Mandatory Automated Verification):** Sau khi hoàn thành việc sinh code, AI BẮT BUỘC phải tự động xác định các câu lệnh chạy test tự động liên quan (như `npm run test`, `bin/magento dev:tests:run` hoặc các command test phù hợp), chạy thử nghiệm và đính kèm kết quả pass/fail thực tế trực tiếp vào tệp `walkthrough.md` mà không cần lập trình viên yêu cầu.
+- **Tự động gợi ý học hỏi (Proactive Learning):** Sau khi hoàn thành một task khó (như sửa bug cấu hình phức tạp, tạo giải pháp bypass lỗi hệ thống, hoặc áp dụng coding pattern mới), AI phải tự đánh giá xem kiến thức này có giá trị tái sử dụng hay không. Nếu có, chủ động gợi ý lập trình viên: *"Tôi thấy task này đã xử lý một lỗi/kiến thức phức tạp X. Bạn có muốn tôi ghi nhớ bài học này vào bộ kỹ năng dùng chung (chạy `/learn`) không?"*.
