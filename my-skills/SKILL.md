@@ -19,6 +19,9 @@ Chào mừng đến với hệ thống Kỹ năng của dự án. Bộ kỹ năn
 ### 3. [WebPOS Customization Skills](file:///mnt/projects/study-ai-antigravity-skills/my-skills/webpos-skills/SKILL.md)
 * Các cơ chế mở rộng POS framework thông qua Plugin (can thiệp method), Mixin (thêm method), Event/Observer, Layout UI Injection và Rewrite.
 
+### 4. [Init Project Skill](file:///mnt/projects/study-ai-antigravity-skills/my-skills/init-project/SKILL.md)
+* Tự động hóa thiết lập dự án mới bằng cách liên kết thư mục `.agent` và sao chép thư mục `docs/` template.
+
 ---
 
 ## Nguyên tắc cốt lõi khi làm việc
