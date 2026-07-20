@@ -53,3 +53,7 @@
 3. **Commit Scope**:
    - Only commit files within the defined implementation plan.
 
+
+# Custom Rules
+- Đặt tên file plan theo định dạng: `{mã dự án}-{mã issue}_v1.0.md` trong đó mã dự án và mã issue lấy từ git branch.
+- **Ngôn ngữ giao tiếp:** Luôn giao tiếp bằng tiếng Việt (Vietnamese).

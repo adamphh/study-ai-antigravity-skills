@@ -6,9 +6,9 @@ Project <domain_name>
 * POS Current Version: 
  
 ## System Design
-- docs/system.md – High-level system architecture
-- docs/invariants.md – Non-negotiable system rules
-- docs/sync_spec.md – POS sync strategy (snapshot + delta)
+- docs/SYSTEM.md – High-level system architecture
+- docs/INVARIANTS.md – Non-negotiable system rules
+- docs/SYNC_SPEC.md – POS sync strategy (snapshot + delta)
 
 ## Developer Guide
 - docs/dev_setup.md – Setting up a development environment

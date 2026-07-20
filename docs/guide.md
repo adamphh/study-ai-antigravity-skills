@@ -43,9 +43,9 @@ Strategy:
 
 # Link các file quan trọng vào trong README.md
 ## System Design
-- docs/system.md – High-level system architecture
-- docs/invariants.md – Non-negotiable system rules
-- docs/sync_spec.md – POS sync strategy (snapshot + delta)
+- docs/SYSTEM.md – High-level system architecture
+- docs/INVARIANTS.md – Non-negotiable system rules
+- docs/SYNC_SPEC.md – POS sync strategy (snapshot + delta)
 
 # Đổi cách "prompt" → Agent Task
 

@@ -7,9 +7,9 @@ description: Danh sách các skills có sẵn
 Danh sách các skills có sẵn trong project:
 
 ## Magento 2 Skills
-📁 `Source/my-skills/magento2-skills/`
+📁 `my-skills/magento2-skills/`
 
-Xem index: `Source/my-skills/magento2-skills/SKILL.md`
+Xem index: `my-skills/magento2-skills/SKILL.md`
 
 Các skills chính:
 - Module, Controller, Model/Repository
@@ -23,9 +23,9 @@ Các skills chính:
 - Email, Unit Testing
 
 ## ReactJS Skills
-📁 `Source/my-skills/reactjs-skills/`
+📁 `my-skills/reactjs-skills/`
 
-Xem index: `Source/my-skills/reactjs-skills/SKILL.md`
+Xem index: `my-skills/reactjs-skills/SKILL.md`
 
 Các skills chính:
 - Class Component, Function Component + Hooks
@@ -39,9 +39,9 @@ Các skills chính:
 - Testing
 
 ## WebPOS Skills
-📁 `Source/my-skills/webpos-skills/`
+📁 `my-skills/webpos-skills/`
 
-Xem index: `Source/my-skills/webpos-skills/SKILL.md`
+Xem index: `my-skills/webpos-skills/SKILL.md`
 
 Các skills chính:
 - Plugin (modify method)

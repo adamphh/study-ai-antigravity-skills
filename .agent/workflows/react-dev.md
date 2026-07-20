@@ -12,17 +12,17 @@ Khi nhận yêu cầu phát triển React, hãy làm theo các bước sau:
 
 | Tác vụ | Skill file |
 |--------|------------|
-| Class Component | `Source/my-skills/reactjs-skills/class-component-basics.md` |
-| Function Component + Hooks | `Source/my-skills/reactjs-skills/function-component-hooks.md` |
-| Custom Hook | `Source/my-skills/reactjs-skills/custom-hooks.md` |
-| React Router | `Source/my-skills/reactjs-skills/react-router.md` |
-| Context/State Management | `Source/my-skills/reactjs-skills/context-state-management.md` |
-| Form Handling | `Source/my-skills/reactjs-skills/form-handling.md` |
-| API Calls | `Source/my-skills/reactjs-skills/api-calls.md` |
-| Performance Optimization | `Source/my-skills/reactjs-skills/performance-optimization.md` |
-| Error Handling | `Source/my-skills/reactjs-skills/error-handling.md` |
-| Component Patterns | `Source/my-skills/reactjs-skills/component-patterns.md` |
-| Testing | `Source/my-skills/reactjs-skills/testing.md` |
+| Class Component | `my-skills/reactjs-skills/class-component-basics.md` |
+| Function Component + Hooks | `my-skills/reactjs-skills/function-component-hooks.md` |
+| Custom Hook | `my-skills/reactjs-skills/custom-hooks.md` |
+| React Router | `my-skills/reactjs-skills/react-router.md` |
+| Context/State Management | `my-skills/reactjs-skills/context-state-management.md` |
+| Form Handling | `my-skills/reactjs-skills/form-handling.md` |
+| API Calls | `my-skills/reactjs-skills/api-calls.md` |
+| Performance Optimization | `my-skills/reactjs-skills/performance-optimization.md` |
+| Error Handling | `my-skills/reactjs-skills/error-handling.md` |
+| Component Patterns | `my-skills/reactjs-skills/component-patterns.md` |
+| Testing | `my-skills/reactjs-skills/testing.md` |
 
 ## 2. Quy tắc chung
 

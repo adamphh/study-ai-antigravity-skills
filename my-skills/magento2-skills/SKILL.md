@@ -82,19 +82,26 @@ description: Tập hợp các skills cần thiết cho việc phát triển Mage
 |-------|-------|
 | [unit-testing.md](./unit-testing.md) | Unit Test và Integration Test với PHPUnit |
 
-### Reference
+### Advanced References & Guidelines
 
 | Skill | Mô tả |
 |-------|-------|
+| [protected-modules.md](./references/protected-modules.md) | Danh sách core modules được bảo vệ không sửa trực tiếp |
+| [data-interface-model.md](./references/data-interface-model.md) | Sinh Data Interface & Model tự động qua script |
+| [data-patch.md](./references/data-patch.md) | Tạo Data Patch |
+| [preference-virtualtype.md](./references/preference-virtualtype.md) | Sử dụng Preference vs Virtual Type |
+| [code-review.md](./references/code-review.md) | Hướng dẫn review code |
+| [debugging.md](./references/debugging.md) | Hướng dẫn debug lỗi Magento |
 | [useful-commands.md](./useful-commands.md) | Các lệnh CLI thường dùng |
 
 ---
 
 ## Cách sử dụng
 
-1. Đọc skill tương ứng với tác vụ bạn cần thực hiện
-2. Thay thế các placeholder như `{Vendor}`, `{ModuleName}`, `{EntityName}` bằng giá trị thực tế
-3. Làm theo các bước hướng dẫn
+1. **BẮT BUỘC**: Trước khi sinh hoặc chỉnh sửa bất kỳ tệp tin nào, hãy kiểm tra xem class hoặc đường dẫn liên quan có nằm trong danh sách core modules được bảo vệ tại [protected-modules.md](./references/protected-modules.md) hay không. Nếu có, tuyệt đối **KHÔNG** được sửa trực tiếp. Hãy đề xuất phương án thay thế sử dụng Plugin hoặc Observer.
+2. Đọc skill tương ứng với tác vụ bạn cần thực hiện. Đối với các tác vụ liên quan đến Data Interface & Model, ưu tiên sử dụng script tự động hóa theo hướng dẫn tại [data-interface-model.md](./references/data-interface-model.md).
+3. Thay thế các placeholder như `{Vendor}`, `{ModuleName}`, `{EntityName}` bằng giá trị thực tế.
+4. Làm theo các bước hướng dẫn.
 
 ## Naming Conventions
 

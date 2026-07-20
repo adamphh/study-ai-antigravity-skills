@@ -32,25 +32,28 @@ Khi nhận yêu cầu phát triển React, hãy làm theo các bước sau:
 
 1.  **File Transfer**:
     -   Use `scp` to upload `build.tar` to `internal-dev.magestore.com`.
-    -   Upload to `/var/www/html/p1062-jw/envs/jw-sc-20240115/src/app/code/Magestore/Webpos/build/apps/`.
+    -   Upload target path: `/var/www/html/{ProjectCode}-{ProjectName}/envs/default/src/app/code/Magestore/Webpos/build/apps/`.
 2.  **Server Commands**:
-    -   SSH into the server.
-    host: internal-dev.magestore.com
-    user: rong
-    pass: 4HivoHVkZ4AgjjK7xCxvke3x3gFSefkf^#pHC7KgPXh7R
-    -   Go to folder /var/www/html/p1062-jw/envs/jw-sc-20240115/src/
-    -   Enter the Docker PHP container.
-    docker compose exec php bash 
-    -   Navigate to `app/code/Magestore/Webpos/build/apps`.
-    -   Clean up the `pos` directory.
-    rm -rf pos/*
-    -   Move and extract `build.tar` into the `pos` directory.
-    cp build.tar pos/
-    - Go to pos directory and extract build.tar
-    cd pos
-    tar -xvf build.tar
+    -   SSH into the server: `ssh <username>@internal-dev.magestore.com` (Sử dụng SSH key/credentials đã được cấu hình sẵn trên máy trạm của bạn).
+    -   Di chuyển vào thư mục dự án: `cd /var/www/html/{ProjectCode}-{ProjectName}/envs/default/src/`
+    -   Truy cập vào Docker PHP container: `docker compose exec php bash`
+    -   Di chuyển vào thư mục build apps của WebPOS: `cd app/code/Magestore/Webpos/build/apps`
+    -   Dọn dẹp thư mục `pos/` hiện tại: `rm -rf pos/*`
+    -   Di chuyển và giải nén `build.tar` vào thư mục `pos/`:
+        ```bash
+        cp build.tar pos/
+        cd pos
+        tar -xvf build.tar
+        ```
 3.  **Magento Update**:
-    -   Run `bin/magento webpos:deploy` from the project root.
+    -   Chạy lệnh deploy WebPOS từ thư mục root của Magento: `bin/magento webpos:deploy`
+
+## Quy tắc xử lý Context (Dành cho AI)
+
+Khi thực thi workflow này, AI **bắt buộc** phải tự động trích xuất các biến ngữ cảnh dựa vào Git branch đang active hoặc đường dẫn workspace hiện hành:
+- **`{ProjectCode}`**: Mã dự án viết thường (ví dụ: `p1146`, `p1062`). Trích xuất từ tên Git branch (ví dụ: `P1146-154-...` -> `p1146`) hoặc thư mục workspace.
+- **`{ProjectName}`**: Tên dự án viết thường (ví dụ: `constellationmusical-com`, `jw`). Trích xuất từ tên Git branch hoặc thư mục workspace.
+- **SSH Authentication**: AI không được yêu cầu mật khẩu plaintext. AI sẽ tự động sinh lệnh kết nối sử dụng khóa SSH (SSH Key) hoặc alias cấu hình trong file `~/.ssh/config`.
 
 ## Verification Plan
 

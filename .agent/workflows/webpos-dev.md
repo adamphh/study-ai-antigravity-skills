@@ -12,12 +12,12 @@ Khi nhận yêu cầu customize WebPOS, hãy làm theo các bước sau:
 
 | Tác vụ | Skill file |
 |--------|------------|
-| Modify method behavior | `Source/my-skills/webpos-skills/create-plugin.md` |
-| Thêm method mới | `Source/my-skills/webpos-skills/create-mixin.md` |
-| Thêm UI vào page | `Source/my-skills/webpos-skills/create-layout.md` |
-| Xử lý event | `Source/my-skills/webpos-skills/create-event.md` |
-| Replace class | `Source/my-skills/webpos-skills/create-rewrite.md` |
-| Tạo page/feature mới | `Source/my-skills/webpos-skills/create-component-reducer.md` |
+| Modify method behavior | `my-skills/webpos-skills/create-plugin.md` |
+| Thêm method mới | `my-skills/webpos-skills/create-mixin.md` |
+| Thêm UI vào page | `my-skills/webpos-skills/create-layout.md` |
+| Xử lý event | `my-skills/webpos-skills/create-event.md` |
+| Replace class | `my-skills/webpos-skills/create-rewrite.md` |
+| Tạo page/feature mới | `my-skills/webpos-skills/create-component-reducer.md` |
 
 ## 2. Chọn mechanism phù hợp
 
