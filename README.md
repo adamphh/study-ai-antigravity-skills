@@ -13,6 +13,7 @@ Project <domain_name>
 ## Developer Guide
 - docs/dev_setup.md – Setting up a development environment
 - docs/dev_guide.md – Overview of the codebase and development practices
+- docs/antigravity_user_guide.md – Hướng dẫn sử dụng Antigravity AI Engine hiệu quả
 - docs/api_spec.md – API specifications for POS and Magento communication
 - docs/testing_guide.md – Testing strategies and guidelines
 - docs/deployment_guide.md – Deployment procedures and best practices
