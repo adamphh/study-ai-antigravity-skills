@@ -61,4 +61,48 @@
 - **Bắt buộc viết và chạy Automation Test khi sinh code (Mandatory Automated Testing):** Khi sinh mã nguồn cho bất kỳ tính năng mới hoặc chỉnh sửa logic nào, AI BẮT BUỘC phải thiết kế và viết kèm theo bộ kiểm thử tự động (Automation Test - như Unit Test, Integration Test phù hợp cho frontend/backend). Sau khi hoàn thành, AI phải tự động xác định câu lệnh và thực thi các bộ test này, kiểm tra kết quả pass/fail thực tế và đính kèm chi tiết trực tiếp vào tệp `walkthrough.md` trước khi bàn giao cho lập trình viên kiểm thử thủ công.
 - **Tự động gợi ý học hỏi (Proactive Learning):** Sau khi hoàn thành một task khó (như sửa bug cấu hình phức tạp, tạo giải pháp bypass lỗi hệ thống, hoặc áp dụng coding pattern mới), AI phải tự đánh giá xem kiến thức này có giá trị tái sử dụng hay không. Nếu có, chủ động gợi ý lập trình viên: *"Tôi thấy task này đã xử lý một lỗi/kiến thức phức tạp X. Bạn có muốn tôi ghi nhớ bài học này vào bộ kỹ năng dùng chung (chạy `/learn`) không?"*.
 - **Tự động kiểm tra cấu hình dự án mới (Auto-Init):** Tại lượt tương tác đầu tiên của mỗi phiên chat (hoặc khi bắt đầu làm việc trên một workspace mới), AI phải tự động kiểm tra xem trong thư mục gốc của dự án đã có thư mục `.agent` và `docs` hay chưa. Nếu chưa có, AI phải chủ động thực thi hoặc đề xuất chạy skill `init-project` để thiết lập đầy đủ phím tắt và tài liệu mẫu cho lập trình viên mà không cần đợi yêu cầu.
+- **Quy định Copyright Header khi sinh file:**
+  - Mỗi file `.php` khi được sinh mới phải có phần copyright ở đầu file:
+    ```php
+    /**
+     * Copyright © Magestore. All rights reserved.
+     * See COPYING.txt for license details.
+     */
+    ```
+  - Mỗi file `.xml` khi được sinh mới phải có phần copyright ở đầu file:
+    ```xml
+    <!--
+      ~ Copyright © Magestore. All rights reserved.
+      ~ See COPYING.txt for license details.
+      -->
+    ```
+- **Quy định DocBlock / Function Comment:**
+  - Dòng đầu tiên trong khối comment của mỗi hàm/phương thức phải có Description mô tả ý nghĩa công việc của hàm đó.
+  - Phải có chính xác 1 dòng trống giữa phần Description và phần khai báo `@param` / `@return`.
+  - Mẫu minh họa:
+    ```php
+    /**
+     * Concise and meaningful description of function purpose.
+     *
+     * @param string $paramName
+     * @return bool
+     */
+    ```
+- **Dấu hiệu phải hỏi lại (Red Flags):** Nếu thấy bất kỳ yêu cầu nào mơ hồ, mâu thuẫn với ngữ cảnh hiện tại, hoặc yêu cầu thay đổi logic cốt lõi mà chưa có chỉ dẫn cụ thể, hãy chủ động hỏi lại thay vì tự phán đoán.
+  - *Ví dụ mâu thuẫn:* Yêu cầu thay đổi giao diện, nhưng lại ghi đè file logic lõi (`Model`, `Controller`) thay vì dùng Plugin/Rewrite.
+  - *Ví dụ mơ hồ:* Yêu cầu "thêm validate" mà không nêu rõ điều kiện validate là gì.
+- **Tích hợp với CodeRunner - Tự động kiểm tra tính đúng đắn của code:**
+  - Sau khi hoàn thành việc sinh hoặc chỉnh sửa mã nguồn, AI phải chủ động gọi CodeRunner để biên dịch (compile) và chạy Unit Test (nếu có thể). 
+  - Kết quả thực thi (Pass/Fail và log lỗi) từ CodeRunner phải được đính kèm trực tiếp vào `walkthrough.md` như một bằng chứng xác thực cho chất lượng code trước khi bàn giao.
+  - Nếu CodeRunner báo lỗi, AI phải tự động xem xét log lỗi và đề xuất phương án sửa chữa trong cùng một phản hồi.
+- **Không tự động tạo hoặc modify files under src/pos/ (core files):**
+  - Khi cần thêm tính năng hoặc thay đổi logic cho các file nằm trong thư mục src/pos/, luôn tạo các file extension hoặc plugin tương ứng trong thư mục src/extension/.
+  - Chỉ sửa các file src/pos/ khi có sự đồng ý rõ ràng từ lập trình viên.
+- **Quy định nghiêm ngặt về phạm vi thư mục / module được phép chỉnh sửa (Allowed Scope Rules):**
+  - **TUYỆT ĐỐI KHÔNG** chỉnh sửa hoặc tạo mới các file/thư mục nằm ngoài 2 phạm vi sau:
+    1. `app/code/Magestore/`
+    2. `client/pos/src/extension/`
+  - **Trong `app/code/Magestore/` (Magento backend/module):** CHỈ ĐƯỢC PHÉP chỉnh sửa hoặc tạo mới ở những module chứa từ `FixBug` (ví dụ: `FixBug`, `WebposFixBug`, ...) hoặc có hậu tố `Custom` (ví dụ: `WebposCustom`, `BarcodeCustom`, ...). Tuyệt đối không sửa các module Core gốc của Magestore.
+  - **Trong `client/pos/src/` (WebPOS frontend):** CHỈ ĐƯỢC PHÉP thao tác trong thư mục `src/extension/`. Tuyệt đối không sửa các file core trong `src/pos/`.
+
 
