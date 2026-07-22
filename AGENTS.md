@@ -103,6 +103,7 @@
     1. `app/code/Magestore/`
     2. `client/pos/src/extension/`
   - **Trong `app/code/Magestore/` (Magento backend/module):** CHỈ ĐƯỢC PHÉP chỉnh sửa hoặc tạo mới ở những module chứa từ `FixBug` (ví dụ: `FixBug`, `WebposFixBug`, ...) hoặc có hậu tố `Custom` (ví dụ: `WebposCustom`, `BarcodeCustom`, ...). Tuyệt đối không sửa các module Core gốc của Magestore.
-  - **Trong `client/pos/src/` (WebPOS frontend):** CHỈ ĐƯỢC PHÉP thao tác trong thư mục `src/extension/`. Tuyệt đối không sửa các file core trong `src/pos/`.
+  - **Trong `client/pos/src/extension/` (WebPOS frontend extension):** CHỈ ĐƯỢC PHÉP tạo module mới hoặc chỉnh sửa các file thuộc thư mục/module có chứa từ `fix-bug` (ví dụ: `fix-bug`, `webpos-fix-bug`, ...) hoặc có hậu tố `custom` ở cuối (ví dụ: `custom`, `webpos-custom`, ...). Tuyệt đối không chỉnh sửa trực tiếp các file core trong `src/pos/` hay các extension core khác.
+
 
 
