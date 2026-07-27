@@ -104,3 +104,34 @@ Plugin chạy theo thứ tự `sortOrder` (số nhỏ chạy trước):
 - Dùng `this` để reference đến object gốc (không cần `$subject` như Magento)
 - Mỗi plugin (before/around/after) là một function
 - `disabled: true` để tạm tắt plugin
+
+## Quy định Export trong File Plugin (Tránh lỗi ESLint)
+
+> [!IMPORTANT]
+> **KHÔNG** được export default trực tiếp object vô danh (`export default { ... }`).
+> **BẮT BUỘC** khai báo object vào hằng số/biến có tên trước khi export để tránh lỗi ESLint `import/no-anonymous-default-export`.
+
+**Đúng**:
+```javascript
+const SimpleProductStockServicePlugin = {
+    getQtyInLocation: {
+        simpleProductStockServicePlugin: {
+            sortOrder: 10,
+            disabled: false,
+            around: function (proceed, product) {
+                // ...
+            }
+        }
+    }
+};
+
+export default SimpleProductStockServicePlugin;
+```
+
+**Sai**:
+```javascript
+// ❌ Sẽ bị lỗi ESLint khi commit code
+export default {
+    getQtyInLocation: { ... }
+};
+```
