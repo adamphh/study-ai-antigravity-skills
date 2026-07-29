@@ -22,6 +22,7 @@ description: Tập hợp các skills cần thiết cho việc phát triển Mage
 | Skill | Mô tả |
 |-------|-------|
 | [create-plugin.md](./create-plugin.md) | Tạo Plugin/Interceptor để modify behavior |
+| [create-rewrite.md](./create-rewrite.md) | Rewrite Class (Preference) cho PHP Backend |
 | [create-observer.md](./create-observer.md) | Tạo Observer để lắng nghe events |
 | [create-product-attribute.md](./create-product-attribute.md) | Tạo Product Attribute (EAV) |
 

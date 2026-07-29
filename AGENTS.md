@@ -12,6 +12,7 @@
 - **Dấu hiệu phải hỏi lại (Red Flags):** Nếu thấy bất kỳ yêu cầu nào mơ hồ, mâu thuẫn với ngữ cảnh hiện tại, hoặc yêu cầu thay đổi logic cốt lõi mà chưa có chỉ dẫn cụ thể, hãy chủ động hỏi lại thay vị tự phán đoán.
   - *Ví dụ mâu thuẫn:* Yêu cầu thay đổi giao diện, nhưng lại ghi đè file logic lõi (`Model`, `Controller`) thay vì dùng Plugin/Rewrite.
   - *Ví dụ mơ hồ:* Yêu cầu "thêm validate" mà không nêu rõ điều kiện validate là gì.
+- **Quy định Bắt buộc Read-Only cho MCP Jira (MCP Jira Read-Only Mandate):** Đối với các MCP tool liên quan đến Jira (`jira` server), AI CHỈ ĐƯỢC PHÉP thực thi các hành động tra cứu/đọc thông tin (Read-only như `jira_get_*`, `jira_search_*`, `jira_whoami`, ...). TUYỆT ĐỐI KHÔNG ĐƯỢC PHÉP tự ý gọi các tool ghi, sửa đổi hoặc xóa dữ liệu Jira (như `jira_create_*`, `jira_update_*`, `jira_transition_*`, `jira_assign_*`, `jira_add_*`, `jira_remove_*`, `jira_delete_*`) trừ khi được người dùng yêu cầu trực tiếp bằng câu lệnh rõ ràng trong cuộc trò chuyện.
 
 ---
 
