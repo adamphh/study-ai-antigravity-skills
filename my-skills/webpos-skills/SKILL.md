@@ -109,6 +109,17 @@ export default (new MyExtensionConfig());
 
 ---
 
+## Quy định Nạp Stock Offline & Xử lý Async Promise trong WebPOS Extension
+
+1. **Truy vấn Tồn kho Offline Mode của Variant Product**:
+   - Khi nạp sản phẩm con (variant) ở Offline Mode, `ProductService.getById` chỉ đọc từ bảng IndexedDB `db.product` mà không tự động JOIN dữ liệu tồn kho `db.stock`.
+   - Nếu `targetProduct.stocks` bị khuyết (`undefined`), BẮT BUỘC phải gọi `StockService.getResourceModel().getResourceOffline().getStockProducts([productId])` để nạp tồn kho từ IndexedDB local trước khi thực thi `validateQty`.
+
+2. **Chuyển đổi Async Promise cho QuoteService trong Redux Epics**:
+   - Khi phương thức plugin `around` của `AddConfigurableProductService` (hoặc các AddProductService khác) chuyển thành `async function` (trả về `Promise`), BẮT BUỘC phải bổ sung plugin `around` cho `QuoteService.addProduct` trong `QuoteServicePlugin` để bọc chuyển đổi `Promise` thành RxJS `Observable` (`Observable.from(promise).flatMap(...)`), giúp Redux Epic (`AddProductEpic`) nhận đúng dữ liệu quote đã cập nhật.
+
+---
+
 ## Commands
 
 ```bash
