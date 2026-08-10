@@ -1,61 +1,71 @@
-Project <domain_name>
+# Study AI Antigravity Skills & Rules Repository
 ---
 
-* Magento Version: 
-* POS Initialized Version: 
-* POS Current Version: 
- 
-## System Design
-- docs/SYSTEM.md – High-level system architecture
-- docs/INVARIANTS.md – Non-negotiable system rules
-- docs/SYNC_SPEC.md – POS sync strategy (snapshot + delta)
+Repository lưu trữ toàn bộ Quy tắc (Rules), Kỹ năng (Skills) và Hướng dẫn Kiến trúc (AGENTS.md) dùng chung cho Antigravity AI Assistant.
 
-## Developer Guide
-- docs/dev_setup.md – Setting up a development environment
-- docs/dev_guide.md – Overview of the codebase and development practices
-- docs/antigravity_user_guide.md – Hướng dẫn sử dụng Antigravity AI Engine hiệu quả
-- docs/api_spec.md – API specifications for POS and Magento communication
-- docs/testing_guide.md – Testing strategies and guidelines
-- docs/deployment_guide.md – Deployment procedures and best practices
-- docs/performance_optimization.md – Tips for optimizing performance
-- docs/contributing.md – Guidelines for contributing to the project
+---
 
-## User Guide
-- docs/user_guide.md – Instructions for end-users on how to use the POS system
-- docs/faq.md – Frequently Asked Questions
-- docs/troubleshooting.md – Common issues and their solutions
+## 🛠️ Hướng dẫn Khôi phục & Thiết lập Symlink khi cài lại Ubuntu / Máy mới
 
-# How to use skills?
-1. Tham khảo trực tiếp khi code
-Mở file skill tương ứng khi bạn cần implement một tính năng cụ thể. Ví dụ:
-    - Cần tạo Controller Magento 2? → Mở create-controller.md
-    - Cần fetch data trong React? → Mở api-calls.md
+Khi cài lại Ubuntu hoặc thiết lập trên máy làm việc mới, thực hiện các bước sau để liên kết bộ Quy tắc & Kỹ năng vào Antigravity CLI:
 
-2. Sử dụng như Agent Skill (Workflow)
-Cấu hình Antigravity để tự động đọc các skills này
-# .agent/workflows/magento-dev.md
+### Bước 1: Clone Repository về máy
+```bash
+cd /mnt/projects
+git clone <URL_REPOSITORY_CỦA_BẠN> study-ai-antigravity-skills
+```
 
-# Cách sử dụng:
-    - Dùng slash command: 
-        - Gõ /magento-dev khi cần tạo code Magento
-        - Gõ /react-dev trong chat khi cần tạo code reactjs
-        - Gõ /webpos-dev - Phát triển WebPOS Extension
-        - Gõ /skills để liệt kê ra các skills hiện có
-    - Tự động: Khi bạn yêu cầu tôi tạo code Magento 2 hoặc React, tôi sẽ tự động: 
-        - Đọc skill file tương ứng
-        - Áp dụng patterns và best practices từ skill
-        - Thay thế placeholders bằng giá trị thực tế
-        - Các lệnh CLI có // turbo sẽ tự động chạy không cần xác nhận
+### Bước 2: Tạo thư mục cấu hình Antigravity toàn cục
+```bash
+mkdir -p ~/.gemini/config
+```
 
-3. Hỏi tôi trực tiếp
-Khi cần, bạn có thể mention file skill và yêu cầu tôi:
+### Bước 3: Xóa các file/folder mặc định (nếu có)
+```bash
+rm -rf ~/.gemini/config/AGENTS.md ~/.gemini/config/rules ~/.gemini/config/skills
+```
 
-    - "@create-controller.md Tạo controller cho trang checkout"
-    - "Áp dụng pattern trong @component-patterns.md để refactor component này"
+### Bước 4: Tạo các liên kết mềm (Symlink)
+Thực hiện chạy 3 câu lệnh `ln -s` sau:
+```bash
+# 1. Link file hướng dẫn kiến trúc chung AGENTS.md
+ln -s /mnt/projects/study-ai-antigravity-skills/AGENTS.md ~/.gemini/config/AGENTS.md
 
-| Hiện tại | Đề xuất |
-|----------|---------|
-| /magento-dev | /m2 hoặc /mage |
-| /react-dev | /react |
-| /webpos-dev | /pos |
-| /skills | /skills (giữ nguyên) |
+# 2. Link thư mục chứa tất cả Quy tắc (Rules)
+ln -s /mnt/projects/study-ai-antigravity-skills/rules ~/.gemini/config/rules
+
+# 3. Link thư mục chứa tất cả Kỹ năng (Skills)
+ln -s /mnt/projects/study-ai-antigravity-skills/my-skills ~/.gemini/config/skills
+```
+
+*(Tùy chọn: Nếu muốn đồng bộ cấu hình MCP server)*:
+```bash
+ln -s /mnt/projects/study-ai-antigravity-skills/mcp_config.json ~/.gemini/config/mcp_config.json
+```
+
+### Bước 5: Kiểm tra kết quả thiết lập Symlink
+```bash
+ls -la ~/.gemini/config
+```
+Kết quả hiển thị đúng dạng mũi tên trỏ sang `/mnt/projects/study-ai-antigravity-skills/...` là đã thành công.
+
+---
+
+## 📁 Cấu trúc Thư mục
+
+- `AGENTS.md` - Quy định chung và phím tắt AI
+- `rules/` - Danh mục các quy tắc toàn cục (Git workflow, Magento 2, WebPOS extension rules, conflict check...)
+- `my-skills/` - Danh mục các kỹ năng & cheatsheet (Mageworx, Tyro, Adyen, POS integration...)
+- `docs/` - Tài liệu kiến trúc và hướng dẫn phát triển hệ thống
+- `scripts/` - Các script tự động hóa hỗ trợ
+- `Plans/` - Lưu trữ các bản kế hoạch mẫu
+
+---
+
+## 🚀 Cách sử dụng Skills & Commands
+1. **Dùng Slash Commands trong chat**:
+   - `/magento-dev` hoặc `/m2` - Phát triển Magento 2 Backend
+   - `/react-dev` hoặc `/react` - Phát triển ReactJS Frontend
+   - `/webpos-dev` hoặc `/pos` - Phát triển WebPOS Extension
+   - `/skills` - Liệt kê danh sách kỹ năng khả dụng
+   - `/learn` - Đề xuất ghi nhớ bài học / quy tắc mới vào hệ thống
