@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Quick CLI Wrapper for Antigravity Indexer
+
+TARGET="${1:-all}"
+SCRIPTS_DIR="/mnt/projects/study-ai-antigravity-skills/scripts"
+
+case "$TARGET" in
+  core)
+    echo "🚀 Refreshing Shared Core Index (Tầng 1)..."
+    python3 "$SCRIPTS_DIR/index_core.py"
+    ;;
+  project)
+    echo "🚀 Refreshing Project Local Index (Tầng 2)..."
+    python3 "$SCRIPTS_DIR/index_project.py"
+    ;;
+  all|*)
+    echo "🚀 Refreshing ALL Indexes (Tầng 1 & Tầng 2)..."
+    python3 "$SCRIPTS_DIR/index_core.py"
+    python3 "$SCRIPTS_DIR/index_project.py"
+    ;;
+esac
