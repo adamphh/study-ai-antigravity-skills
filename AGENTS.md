@@ -13,6 +13,7 @@
   - *Ví dụ mâu thuẫn:* Yêu cầu thay đổi giao diện, nhưng lại ghi đè file logic lõi (`Model`, `Controller`) thay vì dùng Plugin/Rewrite.
   - *Ví dụ mơ hồ:* Yêu cầu "thêm validate" mà không nêu rõ điều kiện validate là gì.
 - **Quy định Bắt buộc Read-Only cho MCP Jira (MCP Jira Read-Only Mandate):** Đối với các MCP tool liên quan đến Jira (`jira` server), AI CHỈ ĐƯỢC PHÉP thực thi các hành động tra cứu/đọc thông tin (Read-only như `jira_get_*`, `jira_search_*`, `jira_whoami`, ...). TUYỆT ĐỐI KHÔNG ĐƯỢC PHÉP tự ý gọi các tool ghi, sửa đổi hoặc xóa dữ liệu Jira (như `jira_create_*`, `jira_update_*`, `jira_transition_*`, `jira_assign_*`, `jira_add_*`, `jira_remove_*`, `jira_delete_*`) trừ khi được người dùng yêu cầu trực tiếp bằng câu lệnh rõ ràng trong cuộc trò chuyện.
+- **Quy định Định dạng Hiển thị Danh sách Jira (Jira Display Format Standard):** Khi hiển thị danh sách Jira Issue (qua lệnh xem danh sách hoặc ở đầu phiên chat), AI BẮT BUỘC phải lấy đủ thông tin các trường `summary`, `status`, `priority` và trình bày dưới dạng bảng Markdown có các cột: **STT**, **Mã Issue (Key)**, **Priority (Độ ưu tiên)**, **Status (Trạng thái)**, và **Tiêu đề (Summary)**. Mặc định sắp xếp các task ưu tiên cao nhất lên đầu (Priority DESC: Highest -> High -> Medium -> Low -> Lowest).
 
 ---
 
