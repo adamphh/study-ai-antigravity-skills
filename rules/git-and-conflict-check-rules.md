@@ -11,3 +11,4 @@
 ## 3. Quy tắc Chọn Nhánh Gốc & Merge Request (Git Base Branch & MR Target Rule)
 - **Nhánh Gốc Mặc Định (Default Base Branch)**: Khi bắt đầu thực hiện bất kỳ task/issue mới nào, nếu lập trình viên không chỉ định rõ nhánh xuất phát, AI BẮT BUỘC phải kiểm tra và checkout nhánh gốc từ `release` (`git checkout release && git pull origin release`). TUYỆT ĐỐI KHÔNG tự ý checkout từ `develop`.
 - **Mục tiêu Merge Request (MR Target)**: Sau khi hoàn thành và commit mã nguồn trên nhánh task/issue, AI phải hướng dẫn hoặc đề xuất tạo Merge Request vào nhánh `develop` để chuẩn bị cho công tác kiểm thử (testing).
+- **URL Parameter cho MR**: Khi đưa link tạo MR trên GitLab cho lập trình viên, AI BẮT BUỘC phải đính kèm thêm tham số `&merge_request%5Btarget_branch%5D=develop` vào URL để GitLab tự động chọn nhánh đích là `develop` thay vì lấy mặc định `release`.
