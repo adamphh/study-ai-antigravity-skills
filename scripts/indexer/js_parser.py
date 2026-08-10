@@ -19,27 +19,42 @@ class JSParser:
             rewrites = []
             observers = []
 
-            # Extract plugin blocks: target_service: { plugin_name: { sortOrder, around/before/after } }
-            plugin_block_match = re.search(r'plugin\s*=\s*\{([\s\S]*?)\};', content) or re.search(r'plugin\s*:\s*\{([\s\S]*?)\}', content)
+            # Extract plugin blocks: target_service: { plugin_name: { sortOrder, around/before/after } } or component: { Comp: PluginComp }
+            plugin_block_match = re.search(r'plugin\s*=\s*\{([\s\S]*?)\n\s*\};', content) or re.search(r'plugin\s*:\s*\{([\s\S]*?)\n\s*\}', content)
             if plugin_block_match:
                 plugin_str = plugin_block_match.group(1)
-                # Regex match target classes/services
+                # Regex match target classes/services/categories
                 target_matches = re.finditer(r'([A-Za-z0-9_]+)\s*:\s*\{([\s\S]*?)\n\s*\}', plugin_str)
                 for tm in target_matches:
-                    target_name = tm.group(1)
+                    category_or_target = tm.group(1)
                     body = tm.group(2)
-                    # Find method plugins inside
+                    # Method 1: Check for nested method objects (around/before/after)
                     method_matches = re.finditer(r'([A-Za-z0-9_]+)\s*:\s*\{([\s\S]*?)\}', body)
+                    found_nested = False
                     for mm in method_matches:
                         method_name = mm.group(1)
                         m_body = mm.group(2)
                         p_type = 'around' if 'around' in m_body else ('before' if 'before' in m_body else 'after')
                         plugins.append({
-                            'target': target_name,
+                            'target': category_or_target,
                             'method': method_name,
                             'type': p_type,
                             'file': config_path
                         })
+                        found_nested = True
+
+                    # Method 2: Check for key-value plugin mapping e.g. Component: Plugin
+                    if not found_nested:
+                        kv_matches = re.finditer(r'([A-Za-z0-9_]+)\s*:\s*([A-Za-z0-9_]+)', body)
+                        for kv in kv_matches:
+                            target_component = kv.group(1)
+                            plugin_class = kv.group(2)
+                            plugins.append({
+                                'target': target_component,
+                                'method': plugin_class,
+                                'type': category_or_target,
+                                'file': config_path
+                            })
 
             # Extract mixin blocks
             mixin_match = re.search(r'mixin\s*=\s*\{([\s\S]*?)\};', content) or re.search(r'mixin\s*:\s*\{([\s\S]*?)\}', content)

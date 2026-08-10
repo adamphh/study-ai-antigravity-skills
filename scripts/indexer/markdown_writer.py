@@ -84,26 +84,81 @@ target_scope: {scope}
         os.makedirs(server_local, exist_ok=True)
         os.makedirs(client_local, exist_ok=True)
 
-        # Write Router INDEX.md
+        # 1. Write Router INDEX.md (using relative links)
         router_content = MarkdownWriter.get_header("Project Local Index Router", scope="project-local")
-        router_content += """
-## 🖥️ Server FixBugs & Customizations
-- 🛠️ **PHP Server Customizations**: [`magestore-fixbug.md`](file://""" + os.path.abspath(os.path.join(server_local, "magestore-fixbug.md")).replace('\\', '/') + """)
+        router_content += """## 🖥️ Server FixBugs & Customizations
+- 🛠️ **PHP Server Customizations**: [`magestore-fixbug.md`](server/project-custom/magestore-fixbug.md)
 
 ## 📱 WebPOS Client Extensions
-- 🎨 **JS Extension Plugins**: [`extension-plugins.md`](file://""" + os.path.abspath(os.path.join(client_local, "extension-plugins.md")).replace('\\', '/') + """)
+- 🎨 **JS Extension Plugins**: [`extension-plugins.md`](client/project-extensions/extension-plugins.md)
 """
         with open(os.path.join(output_dir, "INDEX.md"), 'w', encoding='utf-8') as f:
             f.write(router_content)
 
-        # Write Client Extension Plugins
-        c_content = MarkdownWriter.get_header("WebPOS Client Extension Plugins Matrix", scope="client/pos/src/extension/")
-        c_content += "| Target Service / Component | Method | Type | Extension File |\n"
-        c_content += "| :--- | :--- | :--- | :--- |\n"
+        # 2. Write Server FixBugs Index (magestore-fixbug.md)
+        s_content = MarkdownWriter.get_header("Magento 2 PHP Server Customizations & FixBugs", scope="app/code/Magestore/")
+        
+        s_content += "## 🔌 DI Plugins\n\n"
+        if project_data.get('php_plugins'):
+            s_content += "| Target Class | Plugin Name | Plugin Class | Sort Order | File |\n"
+            s_content += "| :--- | :--- | :--- | :--- | :--- |\n"
+            for p in project_data['php_plugins']:
+                link = MarkdownWriter.format_file_link(p['file'])
+                s_content += f"| `{p['target_class']}` | `{p['plugin_name']}` | `{p['plugin_class']}` | `{p['sort_order']}` | {link} |\n"
+        else:
+            s_content += "*No PHP DI plugins found.*\n"
 
-        for p in project_data.get('js_plugins', []):
-            link = MarkdownWriter.format_file_link(p['file'])
-            c_content += f"| `{p['target']}` | `{p['method']}` | `{p['type']}` | {link} |\n"
+        s_content += "\n## 🔄 DI Preferences (Rewrites)\n\n"
+        if project_data.get('php_preferences'):
+            s_content += "| For (Original Interface/Class) | Type (Rewrite Class) | File |\n"
+            s_content += "| :--- | :--- | :--- |\n"
+            for pref in project_data['php_preferences']:
+                link = MarkdownWriter.format_file_link(pref['file'])
+                s_content += f"| `{pref['for']}` | `{pref['type']}` | {link} |\n"
+        else:
+            s_content += "*No PHP preferences found.*\n"
+
+        s_content += "\n## 📡 Event Observers\n\n"
+        if project_data.get('php_observers'):
+            s_content += "| Event Name | Observer Name | Observer Class | File |\n"
+            s_content += "| :--- | :--- | :--- | :--- |\n"
+            for obs in project_data['php_observers']:
+                link = MarkdownWriter.format_file_link(obs['file'])
+                s_content += f"| `{obs['event_name']}` | `{obs['observer_name']}` | `{obs['observer_class']}` | {link} |\n"
+        else:
+            s_content += "*No PHP observers found.*\n"
+
+        with open(os.path.join(server_local, "magestore-fixbug.md"), 'w', encoding='utf-8') as f:
+            f.write(s_content)
+
+        # 3. Write Client Extension Plugins (extension-plugins.md)
+        c_content = MarkdownWriter.get_header("WebPOS Client Extension Plugins Matrix", scope="client/pos/src/extension/")
+        c_content += "## 🔌 Extension Plugins\n\n"
+        if project_data.get('js_plugins'):
+            c_content += "| Target Component / Service | Method / Plugin | Type | Config File |\n"
+            c_content += "| :--- | :--- | :--- | :--- |\n"
+            for p in project_data['js_plugins']:
+                link = MarkdownWriter.format_file_link(p['file'])
+                c_content += f"| `{p['target']}` | `{p['method']}` | `{p['type']}` | {link} |\n"
+        else:
+            c_content += "*No JS extension plugins registered.*\n"
+
+        if project_data.get('js_mixins'):
+            c_content += "\n## 🔀 Extension Mixins\n\n"
+            c_content += "| Target | Mixin | Config File |\n"
+            c_content += "| :--- | :--- | :--- |\n"
+            for m in project_data['js_mixins']:
+                link = MarkdownWriter.format_file_link(m['file'])
+                c_content += f"| `{m['target']}` | `{m['mixin']}` | {link} |\n"
+
+        if project_data.get('js_rewrites'):
+            c_content += "\n## ✏️ Extension Rewrites\n\n"
+            c_content += "| Target | Rewrite | Config File |\n"
+            c_content += "| :--- | :--- | :--- |\n"
+            for r in project_data['js_rewrites']:
+                link = MarkdownWriter.format_file_link(r['file'])
+                c_content += f"| `{r['target']}` | `{r['rewrite']}` | {link} |\n"
 
         with open(os.path.join(client_local, "extension-plugins.md"), 'w', encoding='utf-8') as f:
             f.write(c_content)
+
