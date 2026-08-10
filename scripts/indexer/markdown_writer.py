@@ -43,14 +43,14 @@ target_scope: {scope}
 
             for mod_name, mod_data in modules.items():
                 md_content += f"\n## Module: `{vendor_name}_{mod_name}`\n\n"
-                md_content += "| Class / Interface | Methods & Signatures | Location |\n"
+                md_content += "| Class / Interface | Methods, Signatures & Line Numbers | Location |\n"
                 md_content += "| :--- | :--- | :--- |\n"
 
                 for cls_info in mod_data.get('classes', []):
                     cls_name = cls_info['full_class'] or cls_info['class_name']
-                    methods_str = "<br/>".join([f"`{m['signature']}`" for m in cls_info['methods'][:5]])
-                    if len(cls_info['methods']) > 5:
-                        methods_str += f"<br/>*(+{len(cls_info['methods']) - 5} more)*"
+                    methods_str = "<br/>".join([f"`{m['signature']}` (#L{m['line']})" for m in cls_info['methods'][:10]])
+                    if len(cls_info['methods']) > 10:
+                        methods_str += f"<br/>*(+{len(cls_info['methods']) - 10} more)*"
                     link = MarkdownWriter.format_file_link(cls_info['file_path'])
                     md_content += f"| `{cls_name}` | {methods_str or 'N/A'} | {link} |\n"
 
@@ -66,10 +66,12 @@ target_scope: {scope}
 
         # Services Index
         md_content = MarkdownWriter.get_header("WebPOS Client Core Services", scope="client/pos/src/service/")
-        md_content += "| Service Name | Methods & Signatures | File Location |\n"
+        md_content += "| Service Name | Methods, Signatures & Line Numbers | File Location |\n"
         md_content += "| :--- | :--- | :--- |\n"
         for srv in client_data.get('services', []):
-            methods_str = "<br/>".join([f"`{m['signature']}`" for m in srv['methods'][:5]])
+            methods_str = "<br/>".join([f"`{m['signature']}` (#L{m['line']})" for m in srv['methods'][:10]])
+            if len(srv['methods']) > 10:
+                methods_str += f"<br/>*(+{len(srv['methods']) - 10} more)*"
             link = MarkdownWriter.format_file_link(srv['file_path'])
             md_content += f"| `{srv['name']}` | {methods_str or 'N/A'} | {link} |\n"
 
@@ -161,4 +163,3 @@ target_scope: {scope}
 
         with open(os.path.join(client_local, "extension-plugins.md"), 'w', encoding='utf-8') as f:
             f.write(c_content)
-
