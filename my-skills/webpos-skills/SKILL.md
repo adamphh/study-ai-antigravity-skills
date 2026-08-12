@@ -120,7 +120,30 @@ export default (new MyExtensionConfig());
 
 ---
 
+## Quy tắc Thứ tự Thực thi khi Take Payment và Tạo Invoice (Backend)
+
+1. **Lưu bản ghi thanh toán trước khi tạo Invoice**:
+   - Khi viết hoặc tùy biến (`rewrite`/`plugin`) phương thức xử lý thanh toán bổ sung (`takePayment` / `processTakePaymentActionLog`) cho đơn hàng WebPOS, BẮT BUỘC phải thực thi hàm lưu bản ghi thanh toán vào bảng `webpos_order_payment` (`createWebposOrderPayment`) **TRƯỚC** khi gọi khởi tạo Invoice (`processInvoice`).
+2. **Đảm bảo dữ liệu Observer đồng bộ**:
+   - Không được gọi `processInvoice` khi các bản ghi giao dịch mới chưa được chèn vào bảng `webpos_order_payment`, nhằm tránh việc Observer `Magestore\Webpos\Observer\Order\Invoice\Pay` truy vấn dữ liệu DB cũ và ghi đè `total_paid` làm sai lệch `total_due` của đơn hàng.
+3. **Cộng dồn `total_paid` chính xác**:
+   - Trong hàm tính toán lại tổng tiền (`addPaymentToOrder`), phải luôn cộng số tiền đợt mới (`$takeAmount`) vào tổng tiền đã trả trước đó (`$oldOrder->getTotalPaid()`), không phụ thuộc đơn lẻ vào biến `pos_pre_total_paid`.
+
+---
+
+## Quy tắc Đặt tên Class cho Plugin, Rewrite và Observer (Class Naming Suffix Standard)
+
+1. **Class Rewrite**: BẮT BUỘC phải thêm hậu tố `Rewrite` ở cuối tên Class.
+   - *Ví dụ:* `CheckoutRepositoryRewrite`, `PosOrderRepositoryRewrite`.
+2. **Class Plugin**: BẮT BUỘC phải thêm hậu tố `Plugin` ở cuối tên Class.
+   - *Ví dụ:* `CheckoutRepositoryPlugin`, `OrderSavePlugin`.
+3. **Class Observer**: BẮT BUỘC phải thêm hậu tố `Observer` ở cuối tên Class (hoặc trong thư mục `Observer`).
+   - *Ví dụ:* `OrderInvoicePayObserver`, `SavePaymentObserver`.
+
+---
+
 ## Commands
+
 
 ```bash
 # Install dependencies
@@ -135,3 +158,4 @@ npm start
 # Build production
 npm run build
 ```
+
