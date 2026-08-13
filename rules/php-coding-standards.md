@@ -35,3 +35,8 @@ Khi viết Observer cho các sự kiện Reindex dữ liệu realtime (Update on
 3. **Kiểm tra Indexer Mode (`!$indexer->isScheduled()`)**:
    - Luôn sử dụng `Magento\Framework\Indexer\IndexerRegistry` kiểm tra `if (!$indexer->isScheduled())` trước khi gọi `executeList()`.
    - *Lý do*: Đảm bảo chỉ reindex realtime khi hệ thống ở chế độ **Update on Save**, tránh chạy trùng lặp với mview cron khi ở chế độ **Update on Schedule**.
+
+## 5. Strict Indentation-Aware Line Length Check
+Khi tính độ dài dòng code:
+- Tổng số ký tự của một dòng = `Số khoảng trắng thụt lề (Leading Spaces) + Độ dài phần văn bản (Content Length)`.
+- Nếu tổng vượt quá 120 ký tự, BẮT BUỘC phải ngắt dòng (multiline wrap) đối với các tham số hàm, mảng, hoặc chuỗi log.

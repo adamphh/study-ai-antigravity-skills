@@ -43,7 +43,7 @@
   - Chỉ sửa các file `src/pos/` khi có sự đồng ý rõ ràng từ lập trình viên.
 
 ### General Syntax & Formatting Rules
-- **Quy định Độ dài Dòng Code Tối đa (Maximum Line Length Rule):** Khi sinh mã nguồn hoặc chỉnh sửa bất kỳ file code nào (`.php`, `.xml`, `.js`, `.css`, ...), mỗi dòng code tuyệt đối KHÔNG ĐƯỢC vượt quá 120 ký tự. Phải chủ động ngắt dòng hợp lý.
+- **Quy định Độ dài Dòng Code Tối đa (Maximum Line Length Rule):** Khi sinh mã nguồn hoặc chỉnh sửa bất kỳ file code nào (`.php`, `.xml`, `.js`, `.css`, ...), mỗi dòng code tuyệt đối KHÔNG ĐƯỢC vượt quá 120 ký tự (**Bao gồm cả ký tự khoảng trắng thụt lề Indentation ở đầu dòng**). AI BẮT BUỘC phải tính tổng `len(indent + content)` hoặc chạy script kiểm tra tự động trước khi commit.
 - **Quy định Copyright Header khi sinh file:**
   - Mỗi file `.php` khi được sinh mới phải có phần copyright ở đầu file:
     ```php
