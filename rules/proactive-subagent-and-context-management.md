@@ -5,6 +5,7 @@ AI BẮT BUỘC phải chủ động tự động gọi Subagent (`invoke_subage
 - Tra cứu, đọc mã nguồn hoặc quét thông tin trên diện rộng (nhiều file/thư mục).
 - Kiểm tra đối soát xung đột Plugin / Mixin / Rewrite giữa các extension.
 - Nghiên cứu logic hệ thống phức tạp trước khi lập kế hoạch.
+- **Bắt buộc Review Code cuối Workflow (Mandatory Code Review & Risk Analysis)**: Sau khi hoàn thành việc triển khai mã nguồn và chạy test cho bất kỳ task nào, AI BẮT BUỘC phải tự động gọi Subagent chuyên biệt (`Role: Code Reviewer & Risk Analyst`) để rà soát toàn bộ các file thay đổi/tạo mới, đánh giá các rủi ro tiềm ẩn (Memory Leak, Race Condition, Null Pointer Safety, Edge cases) và báo cáo cho lập trình viên trước khi commit.
 
 Sau khi Subagent hoàn thành, AI chính chỉ nhận kết quả tóm tắt tinh gọn để trả lời cho người dùng, giúp bảo vệ Context Window của phiên chính luôn sạch sẽ.
 

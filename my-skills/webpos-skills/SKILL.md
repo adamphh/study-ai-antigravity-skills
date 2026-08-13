@@ -120,6 +120,18 @@ export default (new MyExtensionConfig());
 
 ---
 
+## Quy định Nạp Dependency (Import vs Require) trong WebPOS Client Extension
+
+1. **Đối với Class/Object KHÔNG dùng Factory** (Không có `static className` hoặc không khởi tạo qua `ComponentFactory.get`, `ContainerFactory.get`, `ServiceFactory.get`... ví dụ như `SyncConstant`, `PaymentConstant`, Hằng số, Helper thuần hoặc Utility object):
+   - **ĐƯỢC PHÉP `import` trực tiếp ở đầu file** (top-level ES6 import, ví dụ: `import SyncConstant from "../../../../view/constant/SyncConstant";`).
+   - Lợi ích: Tránh việc phải gọi `require` lặp đi lặp lại nhiều lần bên trong từng phương thức.
+
+2. **Đối với Component/Container/Service/Repository CÓ dùng Factory** (Có `static className` hoặc được đăng ký qua `ComponentFactory.get`, `ContainerFactory.get`, `ServiceFactory.get`...):
+   - **BẮT BUỘC nạp bằng `require("...").default` bên trong thân từng phương thức (in-function require)** khi tham chiếu đến.
+   - Lý do: Tránh lỗi `undefined dependency` hoặc circular dependency khi khởi tạo hệ thống Factory và đăng ký Extension Rewrite/Plugin.
+
+---
+
 ## Quy tắc Thứ tự Thực thi khi Take Payment và Tạo Invoice (Backend)
 
 1. **Lưu bản ghi thanh toán trước khi tạo Invoice**:

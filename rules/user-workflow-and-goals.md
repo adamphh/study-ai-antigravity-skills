@@ -17,7 +17,9 @@ flowchart TD
     E --> F["5. Codebase & Conflict Audit: Check Git branch, Allowed Scope & grep_search trùng lặp"]
     F --> G["6. Plan & Review: Hỏi làm rõ + Tạo tệp Plan + Self-Review + Trình duyệt"]
     G --> H["7. Execution & Testing: Triển khai Code + Test Docker/NPM + Dọn dẹp tệp test tạm"]
-    H --> I["8. Walkthrough & Git Commit: Viết Walkthrough + Check Git Diff + Format Commit + Gợi ý /learn"]
+    H --> I["8. Walkthrough & Testing Verification: Viết Walkthrough + Check Git Diff"]
+    I --> J["9. Subagent Code Review: Gọi Subagent rà soát toàn bộ file thay đổi & xuất báo cáo rủi ro"]
+    J --> K["10. Git Commit & Proactive Learning: Format Commit + Gợi ý /learn"]
 ```
 
 1. **Locate & Navigate to Project Directory**:
@@ -46,10 +48,16 @@ flowchart TD
    - Implement extension/plugin code upon user approval.
    - Run automated tests (`npm` for JS, `docker exec` for PHP).
    - Clean up all temporary test files before proceeding to git status/commit.
-8. **Walkthrough, Git Commit Standards & Proactive Learning**:
+8. **Walkthrough & Testing Verification**:
    - Write execution summary & test evidence to `walkthrough.md`.
-   - Review `git status` and `git diff`. Format commit: `{Fix/Feat} [{mã dự án} - {issue id}]: {ticket ID/summary}`.
-   - Proactively suggest `/learn` if task involved complex bug fixes or reusable patterns.
+   - Review `git status` and `git diff`.
+9. **Subagent Code Review & Risk Analysis (Mandatory Final Review Step)**:
+   - Sau khi hoàn thành triển khai mã nguồn và kiểm thử ở bước 7 & 8, AI BẮT BUỘC phải gọi một Subagent chuyên biệt (Role: `Code Reviewer & Risk Analyst`) để rà soát toàn bộ các tệp vừa chỉnh sửa / tạo mới.
+   - Subagent phải kiểm tra và đánh giá chi tiết các rủi ro tiềm ẩn: Memory Leak, Async Race Condition, Null Pointer Safety, Unhandled Edge Cases, DOM Manipulation Errors,...
+   - Trình bày Báo cáo Code Review chi tiết cho lập trình viên và tiến hành khắc phục hoàn thiện mã nguồn trước khi commit.
+10. **Git Commit Standards & Proactive Learning**:
+    - Format commit: `{Fix/Feat} [{mã dự án} - {issue id}]: {ticket ID/summary}`.
+    - Proactively suggest `/learn` if task involved complex bug fixes or reusable patterns.
 
 ## 3. Communication & Clarification Mandate
 - **Strict Clarification Rule**: Always ask the user directly for clarification whenever a requirement, design detail, error log, or task description is ambiguous, missing, or unclear. Never make blind assumptions or patch symptoms silently.

@@ -25,6 +25,7 @@
 - **Tự động kiểm tra cấu hình dự án mới (Auto-Init):** Tại lượt tương tác đầu tiên của mỗi phiên chat (hoặc khi bắt đầu làm việc trên một workspace mới), AI phải tự động kiểm tra xem trong thư mục gốc của dự án đã có thư mục `.agent` và `docs` hay chưa. Nếu chưa có, AI phải chủ động thực thi hoặc đề xuất chạy skill `init-project` để thiết lập đầy đủ phím tắt và tài liệu mẫu cho lập trình viên mà không cần đợi yêu cầu.
 - **Tự động gợi ý học hỏi (Proactive Learning):** Sau khi hoàn thành một task khó (như sửa bug cấu hình phức tạp, tạo giải pháp bypass lỗi hệ thống, hoặc áp dụng coding pattern mới), AI phải tự đánh giá xem kiến thức này có giá trị tái sử dụng hay không. Nếu có, chủ động gợi ý lập trình viên: *"Tôi thấy task này đã xử lý một lỗi/kiến thức phức tạp X. Bạn có muốn tôi ghi nhớ bài học này vào bộ kỹ năng dùng chung (chạy `/learn`) không?"*.
 - **Tự động Đề xuất Học hỏi khi Lặp lại Lỗi (Proactive Learning on Repeated Errors):** Nếu AI nhận diện mình vừa lặp lại một lỗi cũ (như lỗi mất thẻ XML, quên copyright header, sai format commit message, ...), AI phải ngay lập tức gửi lời xin lỗi và CHỦ ĐỘNG đề xuất lập trình viên chạy lệnh `/learn` để ghi nhớ quy tắc phòng tránh vào hệ thống mà không cần đợi lập trình viên phải nhắc nhở.
+- **Bắt buộc Review Code cuối Workflow (Mandatory Code Review & Risk Analysis):** Sau khi hoàn thành việc triển khai mã nguồn và chạy test cho bất kỳ task nào, AI BẮT BUỘC phải tự động gọi Subagent chuyên biệt (`Role: Code Reviewer & Risk Analyst`) để rà soát toàn bộ các file thay đổi/tạo mới, đánh giá các rủi ro tiềm ẩn (Memory Leak, Race Condition, Null Pointer Safety, Edge cases) và báo cáo cho lập trình viên trước khi commit.
 
 ---
 
@@ -79,6 +80,7 @@
 - **Quy tắc Khai báo UI Component Grid trong Magento 2 (Magento 2 UI Component Grid Standards):** Khi tạo mới hoặc sửa cấu hình UI Component Grid (đặc biệt khi xử lý lỗi Export hoặc DataProvider), AI BẮT BUỘC phải tuân thủ 2 tiêu chuẩn:
   1. **Chuẩn hóa DataProvider Class**: Trong file UI Component XML, thuộc tính `<argument name="class">` của `dataProvider` (nằm trong `<dataSource>`) phải sử dụng class chuẩn `Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider`.
   2. **Khai báo Data Source Collection trong `di.xml`**: Trong file `etc/di.xml`, BẮT BUỘC phải đăng ký mapping giữa tên `dataSource` (ví dụ `webpos_location_listing_data_source`) với Grid Resource Model Collection tương ứng thuộc `Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory`.
+- **Quy tắc Reindex Realtime trong Observer Magento 2 (Magento 2 Realtime Reindex Observer Rules):** Khi viết Observer reindex realtime (Update on Save), BẮT BUỘC sử dụng event `_commit_after` (tránh DB lock), bọc khối reindex trong `try-catch (\Throwable $e)` kèm ghi log lỗi (tránh rollback checkout), và kiểm tra `!$indexer->isScheduled()` qua `IndexerRegistry`.
 
 ---
 
