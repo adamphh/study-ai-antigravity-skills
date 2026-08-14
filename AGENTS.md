@@ -72,6 +72,8 @@
      */
     ```
 
+- **Quy định Ký tự Kết thúc Tệp (EOF Newline Rule):** Mỗi file code khi lưu BẮT BUỘC chỉ có chính xác 1 dòng trống / ký tự xuống dòng (1 newline) ở cuối file. Không để xảy ra lỗi thừa nhiều dòng trống ở EOF (`Expected 1 blank line at end of file; X found`).
+
 ---
 
 ## 4. Magento 2 Backend Guidelines
@@ -81,6 +83,8 @@
   1. **Chuẩn hóa DataProvider Class**: Trong file UI Component XML, thuộc tính `<argument name="class">` của `dataProvider` (nằm trong `<dataSource>`) phải sử dụng class chuẩn `Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider`.
   2. **Khai báo Data Source Collection trong `di.xml`**: Trong file `etc/di.xml`, BẮT BUỘC phải đăng ký mapping giữa tên `dataSource` (ví dụ `webpos_location_listing_data_source`) với Grid Resource Model Collection tương ứng thuộc `Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory`.
 - **Quy tắc Reindex Realtime trong Observer Magento 2 (Magento 2 Realtime Reindex Observer Rules):** Khi viết Observer reindex realtime (Update on Save), BẮT BUỘC sử dụng event `_commit_after` (tránh DB lock), bọc khối reindex trong `try-catch (\Throwable $e)` kèm ghi log lỗi (tránh rollback checkout), và kiểm tra `!$indexer->isScheduled()` qua `IndexerRegistry`.
+- **Quy định Truy xuất Extension Attributes trong Magento 2 (Magento 2 Extension Attributes Standard):** Các class Extension Interface (như `ProductExtensionInterface`, `ItemExtensionInterface`, ...) được Magento sinh tự động từ `\Magento\Framework\Api\AbstractSimpleObject`, **KHÔNG kế thừa** từ `\Magento\Framework\DataObject`. Tuyệt đối KHÔNG gọi `getData()` hoặc `setData()` trên đối tượng extension attributes. BẮT BUỘC sử dụng getter/setter chuẩn dạng camelCase được sinh tự động theo khai báo attribute (ví dụ `getWorkStation()`, `setWorkStation($val)`) hoặc kiểm tra `method_exists()` trước khi gọi.
+- **Quy định Không để Khối Catch Rỗng (No Empty Catch Block Rule):** Trong các khối `try ... catch (\Exception $e)`, TUYỆT ĐỐI KHÔNG để khối `catch` rỗng không có câu lệnh xử lý (gây lỗi PHPCS `Empty CATCH statement detected`). Phải ghi log lỗi qua `$this->logger->error(...)` hoặc có câu lệnh gán biến fallback (ví dụ `$result = null;`).
 
 ---
 
@@ -136,15 +140,17 @@
 ---
 
 ## 7. Git Commit Guidelines
-1. **Commit Message Format**:
+1. **Quy định Phân nhánh Git (Git Branching Rule)**:
+   - Luôn luôn tạo branch mới bắt đầu (break branch) từ nhánh `release` (hoặc `origin/release`), TUYỆT ĐỐI KHÔNG break branch từ nhánh `develop`.
+2. **Commit Message Format**:
    - Use the format: `{Fix/Feat} [{mã dự án} - {issue id}]: {ticket ID hoặc user story name}`
      - `{Fix/Feat}`: Use `Fix` for bugs, `Feat` for user stories / features.
      - `{mã dự án}`: Project code (e.g. `P1115` at the start of branch).
      - `{issue id}`: Issue ID (e.g. `391` after project code in branch).
      - `{ticket ID hoặc user story name}`: Ticket ID hoặc user story name (e.g. `[US09] Customize Tyro payment popup layout and cancellation flow` có thể lấy từ git branch).
      - Example: `Feat [P1115 - 391]: [US09] Customize Tyro payment popup layout and cancellation flow`.
-2. **Review Changes Before Committing**:
+3. **Review Changes Before Committing**:
    - Always run `git status` and `git diff` to review code modifications.
    - Do not stage or commit temporary build outputs, configs, or dependencies.
-3. **Commit Scope**:
+4. **Commit Scope**:
    - Only commit files within the defined implementation plan.

@@ -40,3 +40,15 @@ Khi viết Observer cho các sự kiện Reindex dữ liệu realtime (Update on
 Khi tính độ dài dòng code:
 - Tổng số ký tự của một dòng = `Số khoảng trắng thụt lề (Leading Spaces) + Độ dài phần văn bản (Content Length)`.
 - Nếu tổng vượt quá 120 ký tự, BẮT BUỘC phải ngắt dòng (multiline wrap) đối với các tham số hàm, mảng, hoặc chuỗi log.
+
+## 6. End of File (EOF) Single Newline Rule
+Mỗi file code khi lưu BẮT BUỘC chỉ có chính xác 1 dòng trống / ký tự xuống dòng (1 newline) ở cuối file. Tuyệt đối không để thừa 2 hoặc nhiều dòng trống ở EOF để tránh cảnh báo PHPCS: `Expected 1 blank line at end of file; X found`.
+
+## 7. Magento 2 Extension Attributes Access Invariants
+Các class Extension Interface (như `ProductExtensionInterface`, `ItemExtensionInterface`, ...) được Magento sinh tự động từ `\Magento\Framework\Api\AbstractSimpleObject`, **KHÔNG kế thừa** từ `\Magento\Framework\DataObject`.
+- **Tuyệt đối KHÔNG** gọi `getData()` hoặc `setData()` trên đối tượng extension attributes.
+- **Bắt buộc** sử dụng getter/setter chuẩn dạng camelCase được sinh tự động theo khai báo attribute (ví dụ `getWorkStation()`, `setWorkStation($val)`) hoặc kiểm tra `method_exists()` trước khi gọi.
+
+## 8. No Empty Catch Block Rule
+Trong các khối `try ... catch (\Exception $e)`, TUYỆT ĐỐI KHÔNG để khối `catch` rỗng không có câu lệnh xử lý (gây cảnh báo PHPCS `Empty CATCH statement detected`). Phải ghi log lỗi qua `$this->logger->error(...)` hoặc có câu lệnh gán biến fallback (ví dụ `$result = null;`).
+
