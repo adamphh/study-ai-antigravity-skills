@@ -12,7 +12,7 @@ Mỗi file `.php` khi được sinh mới hoặc tùy chỉnh phải khai báo `
 
 declare(strict_types=1);
 
-namespace Magestore\Fixbug\...;
+namespace Magestore\FixBug\...;
 ```
 
 ## 2. No Class DocBlock / Comment Rule
@@ -50,5 +50,4 @@ Các class Extension Interface (như `ProductExtensionInterface`, `ItemExtension
 - **Bắt buộc** sử dụng getter/setter chuẩn dạng camelCase được sinh tự động theo khai báo attribute (ví dụ `getWorkStation()`, `setWorkStation($val)`) hoặc kiểm tra `method_exists()` trước khi gọi.
 
 ## 8. No Empty Catch Block Rule
-Trong các khối `try ... catch (\Exception $e)`, TUYỆT ĐỐI KHÔNG để khối `catch` rỗng không có câu lệnh xử lý (gây cảnh báo PHPCS `Empty CATCH statement detected`). Phải ghi log lỗi qua `$this->logger->error(...)` hoặc có câu lệnh gán biến fallback (ví dụ `$result = null;`).
-
+Trong các khối `try ... catch (\Exception $e)` (hoặc `\Throwable $e` cho Observer/Critical I/O), TUYỆT ĐỐI KHÔNG để khối `catch` rỗng không có câu lệnh xử lý (gây cảnh báo PHPCS `Empty CATCH statement detected`). Phải ghi log lỗi qua `$this->logger->error(...)` hoặc có câu lệnh gán biến fallback (ví dụ `$result = null;`).

@@ -18,4 +18,4 @@
 3. **Forbidden Escaping Patterns**:
    - NEVER wrap `$block->getChildHtml()`, `$block->getBlockHtml()`, `$block->getPagerHtml()`, or `$block->getFormattedAddress()` in `escapeHtml()`. Use `<?= /* @noEscape */ $block->getChildHtml(...) ?>`.
    - NEVER wrap `$secureRenderer->renderTag()` or `$secureRenderer->renderEventListenerAsTag()` in `escapeHtml()`.
-   - NEVER wrap raw JSON payloads in `escapeHtml()` inside inline `<script>` tags or Alpine.js data attributes. Use `escapeJs()` or `<?= /* @noEscape */ json_encode(...) ?>`.
+   - NEVER wrap raw JSON in `escapeHtml()`. Inside `<script>` tags, use `<?= /* @noEscape */ json_encode(...) ?>` or `escapeJs()`. For HTML data attributes (e.g., Alpine.js `x-data`), use `$block->escapeHtmlAttr(json_encode($data))` to prevent attribute breaking or XSS.
