@@ -7,21 +7,23 @@ description: >-
 
 # List Jira Issues Skill
 
-This skill provides optimized listing of open Jira issues assigned to the current user using local caching (TTL 30 minutes) and minimal field querying to save tokens.
+This skill provides optimized listing of open Jira issues assigned to the current user using
+local caching (TTL 3 hours / 180 minutes) and minimal field querying to save tokens.
 
 ## Workflow
 
 1. **Check Cache First**:
    - Run command: `python3 ~/.agent/scripts/manage_jira_cache.py check`
-   - If output is `VALID` and user did not specify `--refresh` or `force`:
-     - Run command: `python3 ~/.agent/scripts/manage_jira_cache.py read`
-     - Display the output Markdown table directly to user.
+   - If output is `VALID` and user did not specify `--refresh`, `refresh`, or `force`:
+     - Run command: `python3 ~/.agent/scripts/manage_jira_cache.py read --source cache`
+     - Display the output Markdown table and footer notes directly to user.
 
-2. **If Expired or Refresh Requested**:
+2. **If Expired or Refresh Requested (`--refresh` / `refresh` / `force`)**:
    - Call `jira_search_issues` via `call_mcp_tool` with arguments:
      - `jql`: `"assignee = currentUser() AND statusCategory != Done ORDER BY priority DESC"`
      - `fields`: `["summary", "status", "priority"]`
      - `maxResults`: `50`
    - Pass the output JSON string from `jira_search_issues` to `manage_jira_cache.py save` via stdin:
      `echo '<json_output>' | python3 ~/.agent/scripts/manage_jira_cache.py save`
-   - Run `python3 ~/.agent/scripts/manage_jira_cache.py read` and display the formatted table.
+   - Run `python3 ~/.agent/scripts/manage_jira_cache.py read --source fresh` and display the
+     formatted table and footer notes directly to user.

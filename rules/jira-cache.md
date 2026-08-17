@@ -2,13 +2,22 @@
 
 1. **Kích hoạt tự động khi xem danh sách Jira**:
    Khi người dùng gõ lệnh `/list-jira`, `list jira`, `danh sách jira` hoặc xem danh sách Jira Issue ở đầu phiên chat:
-   - Ưu tiên sử dụng kịch bản `~/.agent/scripts/manage_jira_cache.py` kiểm tra cache local (`~/.agent/cache/jira_open_issues.json`).
-   - Nếu cache hợp lệ (TTL < 30 phút) và không có cờ `--refresh` hoặc yêu cầu làm mới từ người dùng: Đọc trực tiếp từ cache mà không gọi API MCP Jira Server.
+   - Ưu tiên sử dụng kịch bản `~/.agent/scripts/manage_jira_cache.py` kiểm tra cache local
+     (`~/.agent/cache/jira_open_issues.json`).
+   - Nếu cache hợp lệ (TTL < 3 tiếng / 180 phút) và không có cờ `--refresh`, `refresh` hoặc yêu cầu làm mới
+     từ người dùng: Đọc trực tiếp từ cache qua `manage_jira_cache.py read --source cache` mà không gọi MCP Jira.
 
 2. **Tối ưu hóa trường dữ liệu (Field Filtering) khi fetch mới**:
-   Khi cache hết hạn hoặc người dùng yêu cầu làm mới (`--refresh` / `force`):
-   - Khi gọi MCP tool `jira_search_issues`, **BẮT BUỘC** truyền tham số `fields: ["summary", "status", "priority"]` để chỉ lấy 3 trường cần thiết, tuyệt đối không lấy toàn bộ payload JSON thô.
+   Khi cache hết hạn hoặc người dùng yêu cầu làm mới (`--refresh` / `refresh` / `force`):
+   - Khi gọi MCP tool `jira_search_issues`, **BẮT BUỘC** truyền tham số `fields: ["summary", "status", "priority"]`
+     để chỉ lấy 3 trường cần thiết, tuyệt đối không lấy toàn bộ payload JSON thô.
    - Sau khi fetch thành công, lưu lại vào `~/.agent/cache/jira_open_issues.json` qua `manage_jira_cache.py save`.
+   - Xuất dữ liệu qua `manage_jira_cache.py read --source fresh`.
 
-3. **Chuẩn hóa định dạng hiển thị**:
-   Bảng danh sách Jira xuất ra phải có đủ các cột: **STT**, **Mã Issue (Key)**, **Priority (Độ ưu tiên)**, **Status (Trạng thái)**, và **Tiêu đề (Summary)**, sắp xếp ưu tiên giảm dần (Highest -> High -> Medium -> Low -> Lowest).
+3. **Chuẩn hóa định dạng hiển thị & Trạng thái Nguồn dữ liệu**:
+   - Bảng danh sách Jira xuất ra phải có đủ các cột: **STT**, **Mã Issue (Key)**, **Priority (Độ ưu tiên)**,
+     **Status (Trạng thái)**, và **Tiêu đề (Summary)**, sắp xếp ưu tiên giảm dần (Highest -> Lowest).
+   - **Khi lấy từ Cache:** BẮT BUỘC hiển thị dòng thông tin nguồn dữ liệu Cache local kèm thời gian cập nhật,
+     thời gian còn hiệu lực và hướng dẫn lệnh làm mới:
+     `💡 Để làm mới danh sách trực tiếp từ Jira, vui lòng chạy lệnh: /list-jira --refresh`.
+   - **Khi lấy mới từ Jira:** BẮT BUỘC hiển thị dòng thông báo dữ liệu vừa được lấy mới trực tiếp từ Jira API.
