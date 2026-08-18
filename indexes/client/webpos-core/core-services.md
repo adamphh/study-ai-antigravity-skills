@@ -1,5 +1,5 @@
 <!-- INDEX_METADATA
-generated_at: 2026-08-10T14:48:44Z
+generated_at: 2026-08-18T09:45:05Z
 target_scope: client/pos/src/service/
 -->
 
