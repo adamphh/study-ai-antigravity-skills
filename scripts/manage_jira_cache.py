@@ -20,6 +20,8 @@ PRIORITY_ORDER = {
     "Lowest": 5
 }
 
+HIGH_PRIORITIES = {"Highest", "High", "Critical", "Blocker", "Urgent"}
+
 
 def ensure_cache_dir():
     """Ensure cache directory exists."""
@@ -31,7 +33,9 @@ def is_cache_valid(ttl=DEFAULT_TTL):
     if not os.path.exists(CACHE_FILE):
         return False
     data = get_cached_data()
-    if data and "updated_at" in data:
+    if not data or not isinstance(data, dict) or "issues" not in data:
+        return False
+    if "updated_at" in data:
         return (time.time() - data["updated_at"]) < ttl
     mtime = os.path.getmtime(CACHE_FILE)
     return (time.time() - mtime) < ttl
@@ -49,15 +53,17 @@ def get_cached_data():
 
 
 def save_cache_data(issues):
-    """Save issues list to cache file."""
+    """Save issues list to cache file atomically."""
     ensure_cache_dir()
     payload = {
         "updated_at": time.time(),
         "total": len(issues),
         "issues": issues
     }
-    with open(CACHE_FILE, "w", encoding="utf-8") as f:
+    tmp_file = f"{CACHE_FILE}.tmp"
+    with open(tmp_file, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
+    os.replace(tmp_file, CACHE_FILE)
 
 
 def sort_issues(issues):
@@ -69,22 +75,38 @@ def sort_issues(issues):
     )
 
 
-def format_markdown_table(issues, source_type="cache", updated_at=None):
+def format_markdown_table(issues, source_type="cache", updated_at=None, show_all=False):
     """Format issues into Markdown table with source note and refresh instructions."""
-    sorted_list = sort_issues(issues)
+    valid_issues = [item for item in issues if isinstance(item, dict)]
+    if not show_all:
+        target_issues = [
+            item for item in valid_issues
+            if str(item.get("priority") or "").strip().capitalize() in HIGH_PRIORITIES
+        ]
+    else:
+        target_issues = valid_issues
+
+    sorted_list = sort_issues(target_issues)
     lines = [
-        "| STT | Mã Issue (Key) | Priority (Độ ưu tiên) | Status (Trạng thái) | Tiêu đề (Summary) |",
-        "|---|---|---|---|---|"
+        "| Mã Issue (Key) | Priority (Độ ưu tiên) | Status (Trạng thái) | Tiêu đề (Summary) |",
+        "|---|---|---|---|"
     ]
-    for idx, item in enumerate(sorted_list, 1):
-        if not isinstance(item, dict):
-            continue
-        key = item.get("key", "")
-        priority = item.get("priority") or "N/A"
-        status = item.get("status") or "N/A"
-        raw_summary = item.get("summary") or ""
-        summary = str(raw_summary).replace("|", "\\|")
-        lines.append(f"| {idx} | **{key}** | {priority} | {status} | {summary} |")
+    if not sorted_list:
+        lines.append("| _(Không có issue phù hợp)_ | - | - | - |")
+    else:
+        for item in sorted_list:
+            key = item.get("key", "")
+            priority = item.get("priority") or "N/A"
+            status = item.get("status") or "N/A"
+            raw_summary = item.get("summary") or ""
+            summary = (
+                str(raw_summary)
+                .replace("\r", "")
+                .replace("\n", " ")
+                .replace("|", "\\|")
+                .strip()
+            )
+            lines.append(f"| **{key}** | {priority} | {status} | {summary} |")
 
     lines.append("")
     if source_type == "fresh":
@@ -120,6 +142,13 @@ def format_markdown_table(issues, source_type="cache", updated_at=None):
 
         lines.append(
             "> 💡 *Để làm mới danh sách trực tiếp từ Jira, vui lòng chạy lệnh:* `/list-jira --refresh`"
+        )
+
+    if not show_all and len(valid_issues) > len(target_issues):
+        total_hidden = len(valid_issues) - len(target_issues)
+        lines.append(
+            f"> 💡 *Đang hiển thị {len(target_issues)} issue ưu tiên (Highest & High). "
+            f"Còn {total_hidden} issue khác. Dùng lệnh* `/list-jira --all` *để xem toàn bộ.*"
         )
 
     return "\n".join(lines)
@@ -162,6 +191,7 @@ if __name__ == "__main__":
 
     elif action == "read":
         source = "cache"
+        show_all = "--all" in sys.argv or "all" in sys.argv
         if "--source" in sys.argv:
             idx = sys.argv.index("--source")
             if idx + 1 < len(sys.argv):
@@ -174,7 +204,8 @@ if __name__ == "__main__":
             print(format_markdown_table(
                 data["issues"],
                 source_type=source,
-                updated_at=data.get("updated_at")
+                updated_at=data.get("updated_at"),
+                show_all=show_all
             ))
         else:
             print("NO_CACHE")

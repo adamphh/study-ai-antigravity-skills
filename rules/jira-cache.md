@@ -15,8 +15,10 @@
    - Xuất dữ liệu qua `manage_jira_cache.py read --source fresh`.
 
 3. **Chuẩn hóa định dạng hiển thị & Trạng thái Nguồn dữ liệu**:
-   - Bảng danh sách Jira xuất ra phải có đủ các cột: **STT**, **Mã Issue (Key)**, **Priority (Độ ưu tiên)**,
-     **Status (Trạng thái)**, và **Tiêu đề (Summary)**, sắp xếp ưu tiên giảm dần (Highest -> Lowest).
+   - Bảng danh sách Jira xuất ra bao gồm 4 cột (không có cột STT): **Mã Issue (Key)**,
+     **Priority (Độ ưu tiên)**, **Status (Trạng thái)**, và **Tiêu đề (Summary)**, sắp xếp theo thứ tự ưu tiên giảm dần.
+   - **Mặc định lọc Priority:** Mặc định chỉ hiển thị các issue có độ ưu tiên `Highest` và `High` để tối ưu token.
+     Hỗ trợ cờ `--all` khi muốn hiển thị toàn bộ độ ưu tiên (bao gồm Medium, Low, Lowest).
    - **Khi lấy từ Cache:** BẮT BUỘC hiển thị dòng thông tin nguồn dữ liệu Cache local kèm thời gian cập nhật,
      thời gian còn hiệu lực và hướng dẫn lệnh làm mới:
      `💡 Để làm mới danh sách trực tiếp từ Jira, vui lòng chạy lệnh: /list-jira --refresh`.

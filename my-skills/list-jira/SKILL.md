@@ -15,8 +15,9 @@ local caching (TTL 3 hours / 180 minutes) and minimal field querying to save tok
 1. **Check Cache First**:
    - Run command: `python3 ~/.agent/scripts/manage_jira_cache.py check`
    - If output is `VALID` and user did not specify `--refresh`, `refresh`, or `force`:
-     - Run command: `python3 ~/.agent/scripts/manage_jira_cache.py read --source cache`
-     - Display the output Markdown table and footer notes directly to user.
+     - Determine if user requested `--all` / `all`.
+     - Run command: `python3 ~/.agent/scripts/manage_jira_cache.py read --source cache` (append `--all` if requested).
+     - Display the output Markdown table (4 columns: Key, Priority, Status, Summary) and footer notes.
 
 2. **If Expired or Refresh Requested (`--refresh` / `refresh` / `force`)**:
    - Call `jira_search_issues` via `call_mcp_tool` with arguments:
@@ -25,5 +26,13 @@ local caching (TTL 3 hours / 180 minutes) and minimal field querying to save tok
      - `maxResults`: `50`
    - Pass the output JSON string from `jira_search_issues` to `manage_jira_cache.py save` via stdin:
      `echo '<json_output>' | python3 ~/.agent/scripts/manage_jira_cache.py save`
-   - Run `python3 ~/.agent/scripts/manage_jira_cache.py read --source fresh` and display the
-     formatted table and footer notes directly to user.
+   - Determine if user requested `--all` / `all`.
+   - Run `python3 ~/.agent/scripts/manage_jira_cache.py read --source fresh` (append `--all` if requested)
+     and display the formatted table and footer notes directly to user.
+
+## Display Format Standards
+- **4 Columns:** `Mã Issue (Key)`, `Priority (Độ ưu tiên)`, `Status (Trạng thái)`, `Tiêu đề (Summary)`.
+- **Default Filter:** Only shows `Highest` and `High` priority issues to save tokens.
+- **Flags:**
+  - `--all`: Display all priority levels (Highest -> Lowest).
+  - `--refresh`: Force fresh fetch from Jira API.
