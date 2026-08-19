@@ -15,7 +15,7 @@ description: Tập hợp các skills cần thiết cho việc phát triển Mage
 |-------|-------|
 | [create-module.md](./create-module.md) | Tạo module Magento 2 mới với cấu trúc chuẩn |
 | [create-controller.md](./create-controller.md) | Tạo Controller (Frontend & Admin) |
-| [create-model-repository.md](./create-model-repository.md) | Tạo Model, ResourceModel, Collection và Repository Pattern |
+| [create-model-repository.md](./create-model-repository.md) | Tạo Model, Resource, Collection & Repository |
 
 ### Customization & Extension
 
@@ -40,6 +40,12 @@ description: Tập hợp các skills cần thiết cho việc phát triển Mage
 | [create-ui-form.md](./create-ui-form.md) | Tạo UI Component Form trong Admin |
 | [create-system-config.md](./create-system-config.md) | Tạo System Configuration trong Admin |
 | [create-acl.md](./create-acl.md) | Tạo ACL (Admin Permissions) |
+
+### Reporting & Analytics
+
+| Skill | Mô tả |
+|-------|-------|
+| [create-report.md](./create-report.md) | Tạo Báo cáo chuẩn với Aggregation Engine & Export CSV/Excel |
 
 ### Frontend
 
@@ -99,8 +105,13 @@ description: Tập hợp các skills cần thiết cho việc phát triển Mage
 
 ## Cách sử dụng
 
-1. **BẮT BUỘC**: Trước khi sinh hoặc chỉnh sửa bất kỳ tệp tin nào, hãy kiểm tra xem class hoặc đường dẫn liên quan có nằm trong danh sách core modules được bảo vệ tại [protected-modules.md](./references/protected-modules.md) hay không. Nếu có, tuyệt đối **KHÔNG** được sửa trực tiếp. Hãy đề xuất phương án thay thế sử dụng Plugin hoặc Observer.
-2. Đọc skill tương ứng với tác vụ bạn cần thực hiện. Đối với các tác vụ liên quan đến Data Interface & Model, ưu tiên sử dụng script tự động hóa theo hướng dẫn tại [data-interface-model.md](./references/data-interface-model.md).
+1. **BẮT BUỘC**: Trước khi sinh hoặc chỉnh sửa bất kỳ tệp tin nào, hãy kiểm tra xem class hoặc
+   đường dẫn liên quan có nằm trong danh sách core modules được bảo vệ tại
+   [protected-modules.md](./references/protected-modules.md) hay không. Nếu có, tuyệt đối **KHÔNG** được sửa trực tiếp.
+   Hãy đề xuất phương án thay thế sử dụng Plugin hoặc Observer.
+2. Đọc skill tương ứng với tác vụ bạn cần thực hiện. Đối với các tác vụ liên quan đến Data Interface & Model,
+   ưu tiên sử dụng script tự động hóa theo hướng dẫn tại
+   [data-interface-model.md](./references/data-interface-model.md).
 3. Thay thế các placeholder như `{Vendor}`, `{ModuleName}`, `{EntityName}` bằng giá trị thực tế.
 4. Làm theo các bước hướng dẫn.
 
