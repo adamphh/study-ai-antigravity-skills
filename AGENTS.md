@@ -19,18 +19,11 @@
   - *Ví dụ mâu thuẫn:* Yêu cầu thay đổi giao diện, nhưng lại ghi đè file logic lõi (`Model`, `Controller`)
     thay vì dùng Plugin/Rewrite.
   - *Ví dụ mơ hồ:* Yêu cầu "thêm validate" mà không nêu rõ điều kiện validate là gì.
-- **Quy định Bắt buộc Read-Only cho MCP Jira (MCP Jira Read-Only Mandate):** Đối với các MCP tool liên quan
-  đến Jira (`jira` server), AI CHỈ ĐƯỢC PHÉP thực thi các hành động tra cứu/đọc thông tin (Read-only như
-  `jira_get_*`, `jira_search_*`, `jira_whoami`, ...). TUYỆT ĐỐI KHÔNG ĐƯỢC PHÉP tự ý gọi các tool ghi,
-  sửa đổi hoặc xóa dữ liệu Jira (như `jira_create_*`, `jira_update_*`, `jira_transition_*`, `jira_assign_*`,
-  `jira_add_*`, `jira_remove_*`, `jira_delete_*`) trừ khi được người dùng yêu cầu trực tiếp bằng câu lệnh rõ
-  ràng trong cuộc trò chuyện.
-- **Quy định Định dạng Hiển thị Danh sách Jira (Jira Display Format Standard):** Khi hiển thị danh sách Jira Issue
-  (qua lệnh `/list-jira` hoặc đầu phiên chat), AI BẮT BUỘC phải lấy đủ thông tin các trường `summary`, `status`,
-  `priority` và trình bày dưới dạng bảng Markdown (STT, Mã Issue, Priority DESC, Status, Tiêu đề). Kèm theo đó,
-  phải hiển thị rõ trạng thái nguồn dữ liệu (Cache local hay Lấy mới từ Jira) và hướng dẫn lệnh làm mới
-  `/list-jira --refresh` khi dữ liệu đọc từ cache.
-
+- **Quy định Thao tác Trạng thái trên MCP Jira (MCP Jira Status Transition Rule):**
+  - **Mặc định:** Đối với các MCP tool liên quan đến Jira (`jira` server), AI chỉ thực thi các hành động tra cứu/đọc thông tin (Read-only như `jira_get_*`, `jira_search_*`, `jira_whoami`, ...). TUYỆT ĐỐI KHÔNG tự ý tạo, sửa nội dung, gán người hoặc xóa dữ liệu Jira.
+  - **Ngoại lệ duy nhất về Chuyển Trạng Thái (Status Transition):** Khi bắt đầu làm một task, AI kiểm tra trạng thái hiện tại của issue:
+    - Nếu trạng thái là **`To Do`** (hoặc `Open`, `Backlog`): AI **ĐƯỢC PHÉP tự động chuyển trạng thái task sang `In Progress` (hoặc `In Process`)** thông qua `jira_transition_issue`.
+    - Nếu trạng thái **ĐANG LÀ BẤT KỲ TRẠNG THÁI NÀO KHÁC** (như `In Progress`, `In Review`, `Done`, `Resolved`, ...): **TUYỆT ĐỐI KHÔNG ĐƯỢC PHÉP THAY ĐỔI TRẠNG THÁI** của issue.
 ---
 
 ## 2. Planning, Workflow & Proactive Actions
@@ -52,13 +45,10 @@
   đã có thư mục `.agent` và `docs` hay chưa. Nếu chưa, AI phải chủ động thực thi hoặc đề xuất chạy skill
   `init-project` để thiết lập đầy đủ phím tắt và tài liệu mẫu cho lập trình viên mà không cần đợi yêu cầu.
 - **Tự động gợi ý học hỏi (Proactive Learning):** Sau khi hoàn thành một task khó (như sửa bug cấu hình phức tạp,
-  tạo giải pháp bypass lỗi hệ thống, hoặc áp dụng coding pattern mới), AI phải tự đánh giá xem kiến thức này
-  có giá trị tái sử dụng hay không. Nếu có, chủ động gợi ý lập trình viên: *"Tôi thấy task này đã xử lý một
-  lỗi/kiến thức phức tạp X. Bạn có muốn tôi ghi nhớ bài học này vào bộ kỹ năng dùng chung (chạy `/learn`) không?"*.
-- **Tự động Đề xuất Học hỏi khi Lặp lại Lỗi (Proactive Learning on Repeated Errors):** Nếu AI nhận diện mình
-  vừa lặp lại một lỗi cũ (như lỗi mất thẻ XML, quên copyright header, sai format commit message, ...), AI phải
-  ngay lập tức gửi lời xin lỗi và CHỦ ĐỘNG đề xuất lập trình viên chạy lệnh `/learn` để ghi nhớ quy tắc phòng tránh
-  vào hệ thống mà không cần đợi lập trình viên phải nhắc nhở.
+  tạo giải pháp bypass lỗi hệ thống, hoặc áp dụng coding pattern mới), hoặc khi AI nhận diện mình vừa lặp lại
+  một lỗi cũ (mất thẻ XML, quên copyright header, sai format commit...), AI phải tự đánh giá xem kiến thức này
+  có giá trị tái sử dụng hay không. Nếu có, ngay lập tức gửi lời xin lỗi (nếu là lặp lỗi) và CHỦ ĐỘNG đề xuất
+  lập trình viên chạy lệnh `/learn` để ghi nhớ quy tắc vào hệ thống mà không cần đợi nhắc nhở.
 - **Bắt buộc Review Code cuối Workflow (Mandatory Code Review & Risk Analysis):** Sau khi hoàn thành việc
   triển khai mã nguồn và chạy test cho bất kỳ task nào, AI BẮT BUỘC phải tự động gọi Subagent chuyên biệt
   (`Role: Code Reviewer & Risk Analyst`) để rà soát toàn bộ các file thay đổi/tạo mới, đánh giá các rủi ro
@@ -157,6 +147,29 @@
 - **Quy định Không để Khối Catch Rỗng (No Empty Catch Block Rule):** Trong các khối `try ... catch (\Exception $e)`,
   TUYỆT ĐỐI KHÔNG để khối `catch` rỗng không có câu lệnh xử lý (gây lỗi PHPCS `Empty CATCH statement detected`).
   Phải ghi log lỗi qua `$this->logger->error(...)` hoặc có câu lệnh gán biến fallback (ví dụ `$result = null;`).
+- **Quy định Đối soát Tồn tại Namespace Class/Interface trong Magento 2 (Magento 2 Class/Interface Verification Rule):**
+  Trước khi khai báo `use <Namespace>\<ClassName>;` hoặc inject Class / Interface trong code PHP, AI BẮT BUỘC phải
+  dùng `grep_search` hoặc `find_by_name` kiểm tra sự tồn tại thực tế của tệp Class/Interface đó trong codebase
+  (bao gồm đường dẫn thư mục và chuỗi namespace chính xác). TUYỆT ĐỐI KHÔNG tự phán đoán hoặc suy diễn namespace
+  (ví dụ: `Magestore\Webpos\Api\Location\LocationRepositoryInterface` có chứa sub-namespace `Location\`, không được
+  tự ý viết tắt thành `Magestore\Webpos\Api\LocationRepositoryInterface`). Subagent Code Reviewer khi rà soát mã
+  nguồn cũng BẮT BUỘC phải kiểm tra chéo các `use` import mới trong diff để đảm bảo namespace tồn tại 100%.
+- **Quy định Tương thích Ngược Constructor trong Magento 2 (Magento 2 Constructor Backward Compatibility Rule):**
+  Khi bổ sung bất kỳ Dependency mới nào vào phương thức `__construct()` của một Class / Service / Resolver đã tồn tại:
+  1. **BẮT BUỘC** đặt tham số mới ở cuối danh sách tham số dưới dạng nullable: `?TypeInterface $param = null`.
+  2. **BẮT BUỘC** gán giá trị fallback bên trong thân constructor thông qua `ObjectManager`:
+     `$this->param = $param ?: \Magento\Framework\App\ObjectManager::getInstance()->get(TypeInterface::class);`
+  Quy tắc này đảm bảo 100% không làm gãy các module khác đang extends class đó hoặc khởi tạo qua `parent::__construct()`
+  với danh sách tham số cũ.
+
+- **Quy định Logging cho các tác vụ quan trọng (Critical Task Logging Rule):**
+  Trong các tiến trình nghiệp vụ quan trọng (đặc biệt là thanh toán, tồn kho, đồng bộ dữ liệu), BẮT BUỘC phải
+  thêm các dòng log (`logger->info` hoặc `logger->error`) ghi lại các điểm mốc (checkpoint) và các dữ liệu
+  đầu vào/đầu ra quan trọng. Việc này giúp đội ngũ hỗ trợ kỹ thuật truy vết nhanh lỗi khi có khiếu nại từ người dùng.
+- **Quy định Kiểm tra Phân quyền (Permission Check Rule):**
+  Khi phát triển các API hoặc Controller mới (ví dụ `Adminhtml` hoặc `Rest API`), AI BẮT BUỘC phải khai báo
+  đúng các ACL (Access Control List) trong file `acl.xml` và thực hiện kiểm tra `_isAllowed()` hoặc check quyền
+  hệ thống trước khi thực hiện bất kỳ thao tác thay đổi dữ liệu nào.
 
 ---
 
@@ -281,3 +294,17 @@
    - Do not stage or commit temporary build outputs, configs, or dependencies.
 6. **Commit Scope**:
    - Only commit files within the defined implementation plan.
+
+---
+
+## 8. Workspace & Project Search Priority
+1. **Ưu tiên Tìm kiếm tuyệt đối tại `/mnt/projects`**:
+   - Khi người dùng yêu cầu mở dự án, tìm workspace, bắt đầu task hoặc tìm kiếm mã nguồn:
+     AI **BẮT BUỘC** ưu tiên tìm kiếm và kiểm tra trong thư mục `/mnt/projects/` đầu tiên
+     (ví dụ: `/mnt/projects/<ma_du_an>-*`, `/mnt/projects/study-ai-antigravity-skills`, ...).
+   - Nếu đã tìm thấy workspace/dự án trong `/mnt/projects/`: **TUYỆT ĐỐI DỪNG LẠI**, không
+     được tiếp tục tìm kiếm hoặc quét các thư mục con trong `/home/*` (như `/home/bss/*`).
+2. **Quy định về phạm vi quét thư mục**:
+   - Nghiêm cấm mọi hành vi tự ý quét toàn bộ thư mục `/home/bss` khi chưa kiểm tra `/mnt/projects`.
+   - Chỉ khi nào tìm kiếm trong `/mnt/projects` không thấy kết quả VÀ có chỉ định cụ thể từ
+     người dùng thì mới mở rộng phạm vi tìm kiếm.
