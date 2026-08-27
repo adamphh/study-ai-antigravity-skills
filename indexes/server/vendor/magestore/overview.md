@@ -1,5 +1,5 @@
 <!-- INDEX_METADATA
-generated_at: 2026-08-18T09:45:05Z
+generated_at: 2026-08-25T14:32:17Z
 target_scope: vendor/Magestore
 -->
 
