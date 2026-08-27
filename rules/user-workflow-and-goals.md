@@ -17,7 +17,7 @@ MUST strictly follow this sequence:
 
 ```mermaid
 flowchart TD
-    A["0. Khởi tạo phiên & Tìm dự án (project-mapping)"] --> B["1. Chuẩn bị Git Branch (Checkout release & Tạo branch task)"]
+    A["0. Khởi tạo phiên, Định vị & Chuyển Workspace (project-mapping)"] --> B["1. Chuẩn bị Git Branch (Checkout release & Tạo branch task)"]
     B --> C["2. Đọc Task Jira, Check Conversation & Đổi Tên Session"]
     C --> D["3. Kiểm tra Môi Trường & Mục lục Code (Auto-Init & Auto-Index)"]
     D --> E["4. Tra cứu Data Flow & Check trùng Plugin/Rewrite (qua Index)"]
@@ -29,14 +29,16 @@ flowchart TD
     J --> K["10. Commit chuẩn format & Gợi ý /learn"]
 ```
 
-0. **Conversation History Lookup & Project Navigation**:
+0. **Project Navigation, Workspace Switch & Conversation Check**:
+   - **Định vị dự án & Tự động Chuyển Workspace (In-Memory Lookup & Switch Workspace)**:
+     - Trích xuất mã dự án `{ma_du_an}` từ task ID (ví dụ: `P1062`, `P1115`, `PE4`...).
+     - Tra cứu trực tiếp từ bảng ánh xạ `~/.agent/rules/project-mapping.md` để lấy đường dẫn `/mnt/projects/<ma_du_an>-*`.
+     - **BẮT BUỘC TỰ ĐỘNG CHUYỂN WORKSPACE & GÁN `Cwd`** sang thư mục dự án tương ứng ngay lập tức (0 lệnh shell) TRƯỚC KHI thực thi bất kỳ thao tác nào khác, nhằm tránh tác động đến các thư mục ngoài phạm vi.
    - **Tra cứu Conversation cũ (Auto-Resume Check)**: Kiểm tra danh sách Conversation History xem đã có phiên hội thoại
      nào trước đó liên quan đến mã task `{ma_du_an}-{ma_issue}` hay chưa.
      - **Nếu ĐÃ TỒN TẠI conversation cho issue này**: Ưu tiên gợi ý/mở tiếp conversation cũ để làm việc tiếp,
        kế thừa toàn bộ context và artifact đã có.
-     - **Nếu CHƯA CÓ conversation**: Tiếp tục luồng xử lý trên phiên hiện tại.
-   - **Định vị dự án (In-Memory Lookup)**: Tra cứu trực tiếp trong `~/.agent/rules/project-mapping.md` và đặt `Cwd`
-     sang `/mnt/projects/<ma_du_an>-*` ngay lập tức (0 lệnh shell).
+     - **Nếu CHƯA CÓ conversation**: Tiếp tục luồng xử lý trên workspace của dự án vừa chuyển.
 1. **Git Branch Preparation & Baseline Sync**:
    - Kiểm tra branch hiện tại (`git status`, `git branch --show-current`).
    - Đảm bảo branch phát triển bắt đầu từ nhánh `release` sạch: `git checkout release && git pull origin release`.
