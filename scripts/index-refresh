@@ -13,9 +13,16 @@ case "$TARGET" in
     echo "🚀 Refreshing Project Local Index (Tầng 2)..."
     python3 "$SCRIPTS_DIR/index_project.py"
     ;;
+  mapping)
+    echo "🚀 Syncing Project Mapping..."
+    python3 "$SCRIPTS_DIR/sync_project_mapping.py"
+    ;;
   all|*)
+    echo "🚀 Syncing Project Mapping..."
+    python3 "$SCRIPTS_DIR/sync_project_mapping.py"
     echo "🚀 Refreshing ALL Indexes (Tầng 1 & Tầng 2)..."
     python3 "$SCRIPTS_DIR/index_core.py"
     python3 "$SCRIPTS_DIR/index_project.py"
     ;;
 esac
+

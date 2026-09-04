@@ -17,24 +17,43 @@ Tài liệu hướng dẫn 5 bước quy chuẩn để khôi phục 100% môi tr
 
 ---
 
-## 📋 Quy trình 5 Bước Khôi phục Môi trường trên Máy Mới
+## 📋 Quy trình Khôi phục Môi trường trên Máy Mới
 
-### Bước 1: Clone Repository Kỹ năng dùng chung
+### Cách 1: Tự động hoàn toàn (Khuyên dùng)
 ```bash
 cd /mnt/projects/
-git clone <url-repo-study-ai-antigravity-skills> study-ai-antigravity-skills
+git clone git@github.com:adamphh/study-ai-antigravity-skills.git study-ai-antigravity-skills
+bash /mnt/projects/study-ai-antigravity-skills/scripts/setup-antigravity.sh
 ```
 
-### Bước 2: Thiết lập 4 Symlinks Hệ thống Toàn cục (Global Symlinks)
+---
+
+### Cách 2: Thiết lập thủ công
+
+#### Bước 1: Clone Repository Kỹ năng dùng chung
 ```bash
-mkdir -p ~/.gemini/config/
-ln -sf /mnt/projects/study-ai-antigravity-skills/AGENTS.md ~/.gemini/config/AGENTS.md
-ln -sf /mnt/projects/study-ai-antigravity-skills/my-skills ~/.gemini/config/skills
-ln -sf /mnt/projects/study-ai-antigravity-skills/rules ~/.gemini/config/rules
-ln -sf /mnt/projects/study-ai-antigravity-skills/workflows ~/.gemini/config/workflows
+cd /mnt/projects/
+git clone git@github.com:adamphh/study-ai-antigravity-skills.git study-ai-antigravity-skills
 ```
 
-### Bước 3: Đấu nối Dự án Mới (New Project Workspace Binding)
+#### Bước 2: Thiết lập Symlinks Cấp Thư mục Toàn cục (Global Directory Symlinks)
+```bash
+# 1. Liên kết cho ~/.gemini/config/
+mkdir -p ~/.gemini/config/
+ln -sfn /mnt/projects/study-ai-antigravity-skills/AGENTS.md ~/.gemini/config/AGENTS.md
+ln -sfn /mnt/projects/study-ai-antigravity-skills/my-skills ~/.gemini/config/skills
+ln -sfn /mnt/projects/study-ai-antigravity-skills/rules ~/.gemini/config/rules
+ln -sfn /mnt/projects/study-ai-antigravity-skills/workflows ~/.gemini/config/workflows
+
+# 2. Liên kết cho ~/.agent/
+mkdir -p ~/.agent/
+ln -sfn /mnt/projects/study-ai-antigravity-skills/rules ~/.agent/rules
+ln -sfn /mnt/projects/study-ai-antigravity-skills/my-skills ~/.agent/skills
+ln -sfn /mnt/projects/study-ai-antigravity-skills/scripts ~/.agent/scripts
+ln -sfn /mnt/projects/study-ai-antigravity-skills/workflows ~/.agent/workflows
+```
+
+#### Bước 3: Đấu nối Dự án Mới (New Project Workspace Binding)
 Tại thư mục gốc của dự án mới (ví dụ: `/mnt/projects/p1060-graceandmarbel.co.uk`):
 ```bash
 cd /mnt/projects/p1060-graceandmarbel.co.uk

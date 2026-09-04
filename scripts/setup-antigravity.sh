@@ -146,15 +146,18 @@ ln -sfn "$TARGET_DIR/rules" "$HOME/.gemini/config/rules"
 ln -sfn "$TARGET_DIR/workflows" "$HOME/.gemini/config/workflows"
 ln -sf "$TARGET_DIR/scripts/manage_jira_cache.py" "$HOME/.gemini/config/scripts/manage_jira_cache.py"
 
-# 5.2 Link ~/.agent/ components
-ln -sf "$TARGET_DIR/scripts/manage_jira_cache.py" "$HOME/.agent/scripts/manage_jira_cache.py"
-ln -sf "$TARGET_DIR/my-skills/list-jira/SKILL.md" "$HOME/.agent/skills/list-jira/SKILL.md"
-ln -sf "$TARGET_DIR/rules/jira-cache.md" "$HOME/.agent/rules/jira-cache.md"
+# 5.2 Link ~/.agent/ components (Directory-level symlinks)
+mkdir -p "$HOME/.agent"
+ln -sfn "$TARGET_DIR/rules" "$HOME/.agent/rules"
+ln -sfn "$TARGET_DIR/my-skills" "$HOME/.agent/skills"
+ln -sfn "$TARGET_DIR/scripts" "$HOME/.agent/scripts"
+ln -sfn "$TARGET_DIR/workflows" "$HOME/.agent/workflows"
 
 # 5.3 Make scripts executable & link to ~/.local/bin
 chmod +x "$TARGET_DIR/scripts/manage_jira_cache.py"
 chmod +x "$TARGET_DIR/scripts/index-refresh"
 chmod +x "$TARGET_DIR/scripts/setup-antigravity.sh"
+chmod +x "$TARGET_DIR/scripts/sync_project_mapping.py"
 ln -sf "$TARGET_DIR/scripts/index-refresh" "$HOME/.local/bin/index-refresh"
 ln -sf "$TARGET_DIR/scripts/setup-antigravity.sh" "$HOME/.local/bin/setup-antigravity"
 

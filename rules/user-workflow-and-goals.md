@@ -30,10 +30,12 @@ flowchart TD
 ```
 
 0. **Project Navigation, Workspace Switch & Conversation Check**:
-   - **Định vị dự án & Tự động Chuyển Workspace (In-Memory Lookup & Switch Workspace)**:
+   - **Định vị dự án & Tự động Chuyển Workspace (In-Memory Lookup & Fallback Auto-Scan)**:
      - Trích xuất mã dự án `{ma_du_an}` từ task ID (ví dụ: `P1062`, `P1115`, `PE4`...).
-     - Tra cứu trực tiếp từ bảng ánh xạ `~/.agent/rules/project-mapping.md` để lấy đường dẫn `/mnt/projects/<ma_du_an>-*`.
-     - **BẮT BUỘC TỰ ĐỘNG CHUYỂN WORKSPACE & GÁN `Cwd`** sang thư mục dự án tương ứng ngay lập tức (0 lệnh shell) TRƯỚC KHI thực thi bất kỳ thao tác nào khác, nhằm tránh tác động đến các thư mục ngoài phạm vi.
+     - Tra cứu trực tiếp từ bảng ánh xạ `~/.agent/rules/project-mapping.md`:
+       - **Nếu tìm thấy**: Sử dụng ngay đường dẫn `/mnt/projects/<ma_du_an>-*` (0 lệnh shell).
+       - **Nếu KHÔNG tìm thấy**: Tự động chạy `python3 ~/.agent/scripts/sync_project_mapping.py` để quét lại thư mục `/mnt/projects/`, cập nhật lại `project-mapping.md` và lấy đường dẫn mới nhất.
+     - **BẮT BUỘC TỰ ĐỘNG CHUYỂN WORKSPACE & GÁN `Cwd`** sang thư mục dự án tương ứng ngay lập tức TRƯỚC KHI thực thi bất kỳ thao tác nào khác, nhằm tránh tác động đến các thư mục ngoài phạm vi.
    - **Tra cứu Conversation cũ (Auto-Resume Check)**: Kiểm tra danh sách Conversation History xem đã có phiên hội thoại
      nào trước đó liên quan đến mã task `{ma_du_an}-{ma_issue}` hay chưa.
      - **Nếu ĐÃ TỒN TẠI conversation cho issue này**: Ưu tiên gợi ý/mở tiếp conversation cũ để làm việc tiếp,
@@ -89,3 +91,15 @@ flowchart TD
 - **Phase 2 (WebPOS Codebase Audit & Performance Optimization)**: Proactively observe and audit WebPOS
   client/backend code during tasks to identify bottlenecks, race conditions, offline IndexedDB sync issues, or
   anti-patterns, and propose refactoring/optimization recommendations.
+
+## 5. Continuous Improvement & Proactive Feedback Mandate
+- **Chủ động Đề xuất Cải tiến (Continuous Collaboration & Proactive Improvement)**: Trong toàn bộ quá trình làm việc,
+  AI BẮT BUỘC phải luôn chủ động quan sát mọi khía cạnh (tốc độ thực thi, mức tiêu thụ token, số lượng tool call,
+  độ phức tạp của quy trình, cấu trúc code/cache...).
+- Khi phát hiện bất kỳ cơ hội nào giúp:
+  1. **Làm việc nhanh hơn, giảm độ trễ (Latency)**
+  2. **Tiết kiệm Token & Tối ưu Context**
+  3. **Tự động hóa sâu hơn (thêm Script, Rule, Skill mới)**
+  4. **Nâng cao chất lượng & An toàn mã nguồn**
+  AI **KHÔNG ĐƯỢC NGẦN NGẠI**, phải chủ động chia sẻ, cảnh báo và đề xuất giải pháp ngay cho lập trình viên để cùng
+  nhau tinh chỉnh và nâng cấp hệ thống liên tục.

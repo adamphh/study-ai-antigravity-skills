@@ -5,49 +5,49 @@ Repository lưu trữ toàn bộ Quy tắc (Rules), Kỹ năng (Skills) và Hư�
 
 ---
 
-## 🛠️ Hướng dẫn Khôi phục & Thiết lập Symlink khi cài lại Ubuntu / Máy mới
+## 🛠️ Hướng dẫn Khôi phục & Thiết lập khi cài lại Ubuntu / Máy mới
 
-Khi cài lại Ubuntu hoặc thiết lập trên máy làm việc mới, thực hiện các bước sau để liên kết bộ Quy tắc & Kỹ năng vào Antigravity CLI:
-
-### Bước 1: Clone Repository về máy
+### Cách 1: Tự động hoàn toàn bằng 1 câu lệnh (Khuyên dùng)
 ```bash
 cd /mnt/projects
-git clone <URL_REPOSITORY_CỦA_BẠN> study-ai-antigravity-skills
+git clone git@github.com:adamphh/study-ai-antigravity-skills.git study-ai-antigravity-skills
+bash /mnt/projects/study-ai-antigravity-skills/scripts/setup-antigravity.sh
+```
+*Script sẽ tự động cài đặt dependency, thiết lập toàn bộ symlink cấp thư mục cho cả `~/.gemini/config` và `~/.agent`, phân quyền và tạo index Tầng 1.*
+
+---
+
+### Cách 2: Thiết lập thủ công (Manual Setup)
+
+#### Bước 1: Clone Repository về máy
+```bash
+cd /mnt/projects
+git clone git@github.com:adamphh/study-ai-antigravity-skills.git study-ai-antigravity-skills
 ```
 
-### Bước 2: Tạo thư mục cấu hình Antigravity toàn cục
+#### Bước 2: Thiết lập Symlink cấp Thư mục cho `~/.gemini/config`
 ```bash
 mkdir -p ~/.gemini/config
+ln -sfn /mnt/projects/study-ai-antigravity-skills/AGENTS.md ~/.gemini/config/AGENTS.md
+ln -sfn /mnt/projects/study-ai-antigravity-skills/rules ~/.gemini/config/rules
+ln -sfn /mnt/projects/study-ai-antigravity-skills/my-skills ~/.gemini/config/skills
+ln -sfn /mnt/projects/study-ai-antigravity-skills/workflows ~/.gemini/config/workflows
 ```
 
-### Bước 3: Xóa các file/folder mặc định (nếu có)
+#### Bước 3: Thiết lập Symlink cấp Thư mục cho `~/.agent`
 ```bash
-rm -rf ~/.gemini/config/AGENTS.md ~/.gemini/config/rules ~/.gemini/config/skills
+mkdir -p ~/.agent
+ln -sfn /mnt/projects/study-ai-antigravity-skills/rules ~/.agent/rules
+ln -sfn /mnt/projects/study-ai-antigravity-skills/my-skills ~/.agent/skills
+ln -sfn /mnt/projects/study-ai-antigravity-skills/scripts ~/.agent/scripts
+ln -sfn /mnt/projects/study-ai-antigravity-skills/workflows ~/.agent/workflows
 ```
 
-### Bước 4: Tạo các liên kết mềm (Symlink)
-Thực hiện chạy 3 câu lệnh `ln -s` sau:
+#### Bước 4: Kiểm tra kết quả thiết lập
 ```bash
-# 1. Link file hướng dẫn kiến trúc chung AGENTS.md
-ln -s /mnt/projects/study-ai-antigravity-skills/AGENTS.md ~/.gemini/config/AGENTS.md
-
-# 2. Link thư mục chứa tất cả Quy tắc (Rules)
-ln -s /mnt/projects/study-ai-antigravity-skills/rules ~/.gemini/config/rules
-
-# 3. Link thư mục chứa tất cả Kỹ năng (Skills)
-ln -s /mnt/projects/study-ai-antigravity-skills/my-skills ~/.gemini/config/skills
+ls -la ~/.gemini/config ~/.agent
 ```
-
-*(Tùy chọn: Nếu muốn đồng bộ cấu hình MCP server)*:
-```bash
-ln -s /mnt/projects/study-ai-antigravity-skills/mcp_config.json ~/.gemini/config/mcp_config.json
-```
-
-### Bước 5: Kiểm tra kết quả thiết lập Symlink
-```bash
-ls -la ~/.gemini/config
-```
-Kết quả hiển thị đúng dạng mũi tên trỏ sang `/mnt/projects/study-ai-antigravity-skills/...` là đã thành công.
+Kết quả hiển thị đúng dạng mũi tên trỏ sang `/mnt/projects/study-ai-antigravity-skills/...` là đã thành công. Từ nay, bất kỳ file rule hay skill nào thêm mới vào repo đều được tự động nhận diện 100%.
 
 ---
 
