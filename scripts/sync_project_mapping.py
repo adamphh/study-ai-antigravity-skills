@@ -3,7 +3,11 @@ import os
 import re
 from pathlib import Path
 
-PROJECTS_DIR = Path('/mnt/projects')
+SEARCH_DIRS = [
+    Path('/mnt/projects'),
+    Path('/var/www/magento249'),
+    Path('/home/bss')
+]
 OUTPUT_RULE_FILE = Path('/mnt/projects/study-ai-antigravity-skills/rules/project-mapping.md')
 
 def extract_project_code(dir_name):
@@ -19,16 +23,24 @@ def extract_project_code(dir_name):
     return None
 
 def main():
-    if not PROJECTS_DIR.exists():
-        print(f"Error: {PROJECTS_DIR} does not exist.")
-        return
-
     entries = []
-    for item in sorted(PROJECTS_DIR.iterdir(), key=lambda p: p.name.lower()):
-        if item.is_dir() and not item.name.startswith('.'):
-            dir_name = item.name
-            proj_code = extract_project_code(dir_name)
-            entries.append((proj_code or 'OTHER', str(item.resolve()), dir_name))
+    seen_paths = set()
+
+    for base_dir in SEARCH_DIRS:
+        if not base_dir.exists():
+            continue
+        try:
+            for item in sorted(base_dir.iterdir(), key=lambda p: p.name.lower()):
+                if item.is_dir() and not item.name.startswith('.'):
+                    full_path = str(item.resolve())
+                    if full_path in seen_paths:
+                        continue
+                    seen_paths.add(full_path)
+                    dir_name = item.name
+                    proj_code = extract_project_code(dir_name)
+                    entries.append((proj_code or 'OTHER', full_path, dir_name))
+        except (PermissionError, OSError):
+            continue
 
     # Sort entries by project code, placing P-codes first
     def sort_key(item):

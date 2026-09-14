@@ -1,11 +1,12 @@
 # User Workflow, Environment & Personal Goals Rules
 
 ## 1. Environment & Execution Setup
-- **Project Root Location**: TẤT CẢ các dự án mã nguồn của lập trình viên đều nằm tại `/mnt/projects/` (ví dụ:
-  `/mnt/projects/p1062-jw.com.au`, `/mnt/projects/p1115-cremagarage-com-au`, ...).
+- **Project Root Location**: Các dự án mã nguồn của lập trình viên nằm tại các thư mục gốc chính bao gồm:
+  `/mnt/projects/` (mặc định), `/var/www/` hoặc `/home/bss/` (ví dụ:
+  `/mnt/projects/p1062-jw.com.au`, `/mnt/projects/p1115-cremagarage-com-au`, `/mnt/projects/study-ai-antigravity-skills`...).
   - AI BẮT BUỘC tra cứu đường dẫn dự án trực tiếp từ file rule `~/.agent/rules/project-mapping.md` (In-Memory Lookup).
-  - Khi bắt đầu bất kỳ task nào, AI BẮT BUỘC đặt Cwd trực tiếp vào thư mục dự án tương ứng trong `/mnt/projects/<ma_du_an>-*`.
-  - *(Quy định cấm chạy shell tại `/home/bss`: xem `~/.agent/rules/workspace-search-priority.md`.)*
+  - Khi bắt đầu bất kỳ task nào, AI BẮT BUỘC đặt Cwd trực tiếp vào thư mục dự án tương ứng (ví dụ `/mnt/projects/<ma_du_an>-*`).
+  - *(Quy định cấm chạy shell tại thư mục Home gốc `/home/bss`: xem `~/.agent/rules/workspace-search-priority.md`.)*
 
 - **Frontend (WebPOS Client)**: Run directly using `npm` (`npm run upgrade`, `npm run test`...).
 - **Backend (Magento 2 PHP)**: PHP is NOT installed on the host machine. All PHP/Magento CLI and PHP unit test
@@ -25,7 +26,7 @@ flowchart TD
     F --> G["6. Viết Code theo đúng Scope (Custom/FixBug & npm upgrade)"]
     G --> H["7. Chạy Test Tự Động (Docker/NPM) & Dọn file rác"]
     H --> I["8. Viết Walkthrough & Soi lại Git Diff"]
-    I --> J["9. Subagent Review độc lập (Memory leak, Race condition)"]
+    I --> J["9. Subagent Review & Architecture Audit"]
     J --> K["10. Commit chuẩn format & Gợi ý /learn"]
 ```
 
@@ -33,8 +34,8 @@ flowchart TD
    - **Định vị dự án & Tự động Chuyển Workspace (In-Memory Lookup & Fallback Auto-Scan)**:
      - Trích xuất mã dự án `{ma_du_an}` từ task ID (ví dụ: `P1062`, `P1115`, `PE4`...).
      - Tra cứu trực tiếp từ bảng ánh xạ `~/.agent/rules/project-mapping.md`:
-       - **Nếu tìm thấy**: Sử dụng ngay đường dẫn `/mnt/projects/<ma_du_an>-*` (0 lệnh shell).
-       - **Nếu KHÔNG tìm thấy**: Tự động chạy `python3 ~/.agent/scripts/sync_project_mapping.py` để quét lại thư mục `/mnt/projects/`, cập nhật lại `project-mapping.md` và lấy đường dẫn mới nhất.
+       - **Nếu tìm thấy**: Sử dụng ngay đường dẫn thư mục dự án (0 lệnh shell).
+       - **Nếu KHÔNG tìm thấy**: Tự động chạy `python3 ~/.agent/scripts/sync_project_mapping.py` để quét lại các thư mục gốc (`/mnt/projects/`, `/var/www/`, `/home/bss/`), cập nhật lại `project-mapping.md` và lấy đường dẫn mới nhất.
      - **BẮT BUỘC TỰ ĐỘNG CHUYỂN WORKSPACE & GÁN `Cwd`** sang thư mục dự án tương ứng ngay lập tức TRƯỚC KHI thực thi bất kỳ thao tác nào khác, nhằm tránh tác động đến các thư mục ngoài phạm vi.
    - **Tra cứu Conversation cũ (Auto-Resume Check)**: Kiểm tra danh sách Conversation History xem đã có phiên hội thoại
      nào trước đó liên quan đến mã task `{ma_du_an}-{ma_issue}` hay chưa.
@@ -74,8 +75,13 @@ flowchart TD
 8. **Walkthrough & Git Diff Verification**:
    - Ghi nhận kết quả thực thi vào `walkthrough.md`.
    - Tự rà soát `git diff` đảm bảo: Dòng code <= 120 ký tự, Copyright Header, Thẻ XML match 100%.
-9. **Subagent Code Review & Risk Analysis**:
-   - Gọi Subagent độc lập (`Role: Code Reviewer & Risk Analyst`) soi lại diff tìm Memory Leak, Race Condition, Null Pointer Safety.
+9. **Subagent Code Review, SQL Security & Architecture Audit**:
+   - Gọi Subagent độc lập (`Role: Code Reviewer & Architecture Auditor`) thực thi 3 nhiệm vụ:
+     1. Soi lại diff tìm rủi ro mã nguồn (Memory Leak, Race Condition, Null Pointer Safety, Type Safety).
+     2. **Kiểm toán Bảo mật & Hiệu năng SQL (SQL Security & Performance Audit)**: Chống SQL Injection (bắt buộc dùng
+        bind variables/quoteInto), chặn lỗi N+1 query trong loop, tránh DB deadlocks, và kiểm tra quyền truy xuất.
+     3. **Kiểm toán Kiến trúc (Architecture & System Audit)**: Phát hiện pattern mới cần đóng gói thành Skill/Rule,
+        hoặc phát hiện mâu thuẫn/nghẽn trong hệ thống rules để đề xuất cải tiến có điều kiện.
 10. **Git Commit Standards & Proactive Learning**:
     - Commit đúng chuẩn: `{Fix/Feat} [{mã dự án} - {issue id}]: {ticket ID/summary}`.
     - Đề xuất chạy `/learn` nếu task có bài học/kinh nghiệm quý cần ghi nhớ.
@@ -92,14 +98,14 @@ flowchart TD
   client/backend code during tasks to identify bottlenecks, race conditions, offline IndexedDB sync issues, or
   anti-patterns, and propose refactoring/optimization recommendations.
 
-## 5. Continuous Improvement & Proactive Feedback Mandate
-- **Chủ động Đề xuất Cải tiến (Continuous Collaboration & Proactive Improvement)**: Trong toàn bộ quá trình làm việc,
-  AI BẮT BUỘC phải luôn chủ động quan sát mọi khía cạnh (tốc độ thực thi, mức tiêu thụ token, số lượng tool call,
-  độ phức tạp của quy trình, cấu trúc code/cache...).
-- Khi phát hiện bất kỳ cơ hội nào giúp:
-  1. **Làm việc nhanh hơn, giảm độ trễ (Latency)**
-  2. **Tiết kiệm Token & Tối ưu Context**
-  3. **Tự động hóa sâu hơn (thêm Script, Rule, Skill mới)**
-  4. **Nâng cao chất lượng & An toàn mã nguồn**
-  AI **KHÔNG ĐƯỢC NGẦN NGẠI**, phải chủ động chia sẻ, cảnh báo và đề xuất giải pháp ngay cho lập trình viên để cùng
-  nhau tinh chỉnh và nâng cấp hệ thống liên tục.
+## 5. Quy định Đánh giá & Đề xuất Cải tiến Có Điều kiện (Selective Continuous Improvement Rule)
+- **Đánh giá ngầm Bắt buộc (Mandatory Internal Evaluation)**: Sau khi hoàn thành triển khai mã nguồn và kiểm thử cho
+  mỗi task, AI BẮT BUỘC phải tự động đánh giá lại toàn bộ quá trình thực hiện theo 3 tiêu chuẩn:
+  1. *Có pattern mới đáng giá cần đóng gói thành Skill hoặc mở rộng tài liệu không?*
+  2. *Bộ nhớ / Rules / Tools hiện tại có điểm nào gây cản trở, mâu thuẫn hoặc lãng phí Token không?*
+  3. *Quy trình vừa thực hiện có thao tác thủ công lặp lại nào có thể tự động hóa bằng Script / Slash Command không?*
+- **Đề xuất Có Điều kiện (Conditional Proposal)**:
+  - **Nếu hệ thống đã tối ưu**: Hoàn thành task bình thường, bàn giao súc tích, **TUYỆT ĐỐI KHÔNG sinh chữ thừa hay đề xuất
+    sáo rỗng làm loãng thông tin**.
+  - **Nếu phát hiện điểm nghẽn hoặc cơ hội cải tiến thực sự**: Chủ động đưa ra 1-2 đề xuất ngắn gọn, trực diện kèm giải
+    pháp xử lý cụ thể để cùng lập trình viên tinh chỉnh hệ thống.

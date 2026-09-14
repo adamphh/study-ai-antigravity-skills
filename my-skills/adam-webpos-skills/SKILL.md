@@ -1,6 +1,6 @@
 ---
-name: WebPOS Development Skills
-description: Tập hợp các skills cần thiết cho việc customize WebPOS
+name: adam-webpos-skills
+description: Tập hợp các skills và hướng dẫn cần thiết cho việc phát triển và customize WebPOS Client.
 ---
 
 # WebPOS Development Skills

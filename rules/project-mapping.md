@@ -21,6 +21,7 @@
 | `P668` | `/mnt/projects/P668-kalash-group` | `P668-kalash-group` |
 | `P686` | `/mnt/projects/p686-stagemusic-lu` | `p686-stagemusic-lu` |
 | `P687` | `/mnt/projects/p687-vobeinterior` | `p687-vobeinterior` |
+| `P689` | `/mnt/projects/p689-funbox-ee` | `p689-funbox-ee` |
 | `P696` | `/mnt/projects/P696-fastertechniek-nl` | `P696-fastertechniek-nl` |
 | `P722` | `/mnt/projects/p722-gameshop-twente-m2-4-7` | `p722-gameshop-twente-m2-4-7` |
 | `P725` | `/mnt/projects/P725-thefoundrypublishing-com` | `P725-thefoundrypublishing-com` |
@@ -71,6 +72,22 @@
 | `POS` | `/mnt/projects/pos-mp` | `pos-mp` |
 | `POS` | `/mnt/projects/pos-simple` | `pos-simple` |
 | `POS` | `/mnt/projects/pos-simple-product` | `pos-simple-product` |
+| `OTHER` | `/home/bss/Applications` | `Applications` |
+| `OTHER` | `/home/bss/Desktop` | `Desktop` |
+| `OTHER` | `/home/bss/Documents` | `Documents` |
+| `OTHER` | `/home/bss/Downloads` | `Downloads` |
+| `OTHER` | `/home/bss/Games` | `Games` |
+| `OTHER` | `/home/bss/Library` | `Library` |
+| `OTHER` | `/home/bss/Music` | `Music` |
+| `OTHER` | `/home/bss/Pictures` | `Pictures` |
+| `OTHER` | `/home/bss/Plans` | `Plans` |
+| `OTHER` | `/home/bss/Public` | `Public` |
+| `OTHER` | `/home/bss/Templates` | `Templates` |
+| `OTHER` | `/home/bss/Videos` | `Videos` |
+| `OTHER` | `/home/bss/dwaccelerator` | `dwaccelerator` |
+| `OTHER` | `/home/bss/node_modules` | `node_modules` |
+| `OTHER` | `/home/bss/snap` | `snap` |
+| `OTHER` | `/mnt` | `mnt` |
 | `OTHER` | `/mnt/projects/LateBirdStateART` | `LateBirdStateART` |
 | `OTHER` | `/mnt/projects/Plugins` | `Plugins` |
 | `OTHER` | `/mnt/projects/Umich-Techshop` | `Umich-Techshop` |
@@ -84,5 +101,12 @@
 | `OTHER` | `/mnt/projects/shopify` | `shopify` |
 | `OTHER` | `/mnt/projects/study-ai-antigravity-skills` | `study-ai-antigravity-skills` |
 | `OTHER` | `/mnt/projects/study-ai-claude-skills` | `study-ai-claude-skills` |
+| `OTHER` | `/var/www/magento249/db-data` | `db-data` |
+| `OTHER` | `/var/www/magento249/nginx` | `nginx` |
+| `OTHER` | `/var/www/magento249/oss` | `oss` |
+| `OTHER` | `/var/www/magento249/php` | `php` |
+| `OTHER` | `/var/www/magento249/proxy` | `proxy` |
+| `OTHER` | `/var/www/magento249/src` | `src` |
+| `OTHER` | `/var/www/magento249/varnish` | `varnish` |
 
 > 💡 *Tệp này được tự động cập nhật bởi `~/.agent/scripts/sync_project_mapping.py` mỗi khi có dự án mới.*

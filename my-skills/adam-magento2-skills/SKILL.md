@@ -1,6 +1,6 @@
 ---
-name: Magento 2 Development Skills
-description: Tập hợp các skills cần thiết cho việc phát triển Magento 2
+name: adam-magento2-skills
+description: Tập hợp các skills và hướng dẫn chuẩn cho việc phát triển Magento 2 PHP.
 ---
 
 # Magento 2 Development Skills

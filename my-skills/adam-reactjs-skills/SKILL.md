@@ -1,6 +1,6 @@
 ---
-name: ReactJS Development Skills
-description: Tập hợp các skills cần thiết cho việc phát triển React
+name: adam-reactjs-skills
+description: Tập hợp các skills và hướng dẫn cần thiết cho việc phát triển ReactJS.
 ---
 
 # ReactJS Development Skills

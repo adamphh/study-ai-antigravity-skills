@@ -1,5 +1,5 @@
 ---
-name: webpos-payment-terminal-integration
+name: adam-webpos-payment-terminal-integration
 description: Hướng dẫn tích hợp Payment Terminal (Adyen, Dojo, Tyro, EFTPOS...) vào Magestore WebPOS cả Client (React/Redux/Epic) và Server (Magento 2 PHP). Dùng khi có yêu cầu thêm/customize phương thức thanh toán qua thiết bị POS Terminal.
 ---
 

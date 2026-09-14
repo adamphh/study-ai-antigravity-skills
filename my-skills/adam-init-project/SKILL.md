@@ -1,6 +1,6 @@
 ---
-name: init-project
-description: Khởi tạo cấu hình Antigravity cho máy mới và dự án mới bằng cách đấu nối Symlinks, Slash Commands và Script Indexer 2 tầng
+name: adam-init-project
+description: Khởi tạo cấu hình Antigravity cho máy mới và dự án mới bằng cách đấu nối Symlinks, Slash Commands và Script Indexer 2 tầng. Trigger bằng /adam-init-project hoặc /init-project.
 ---
 
 # Antigravity Clean Machine Setup & Project Initialization Guide (`init-project`)

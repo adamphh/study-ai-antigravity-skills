@@ -1,6 +1,6 @@
 ---
-name: Script Indexer Architecture
-description: Kiến trúc và quy chuẩn thiết kế bộ lập chỉ mục mã nguồn 2 tầng (Magento PHP & WebPOS JS) tối ưu Token cho AI Assistant
+name: adam-script-indexer
+description: Kiến trúc và quy chuẩn thiết kế bộ lập chỉ mục mã nguồn 2 tầng (Magento PHP & WebPOS JS) tối ưu Token cho AI Assistant.
 ---
 
 # Script Indexer Architecture (Antigravity Modular 2-Tier Script Indexing)

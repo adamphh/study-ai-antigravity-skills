@@ -11,8 +11,8 @@ Workflow khoi tao phien lam viec cho task moi theo dung 10 buoc quy chuan:
 1. **Buoc 0: Dinh vi Du An & Chuyen Workspace (In-Memory Lookup & Fallback Auto-Scan)**
    - Trich xuat ma du an `{ma_du_an}` tu tham so task ID (vi du: `P689-32` -> `P689`).
    - Tra cuu bang anh xa trong `/mnt/projects/study-ai-antigravity-skills/rules/project-mapping.md`:
-     - **Neu tim thay**: Su dung ngay duong dan `/mnt/projects/<ma_du_an>-*` (0 lenh shell).
-     - **Neu KHONG tim thay**: Tu dong chay lenh `python3 /mnt/projects/study-ai-antigravity-skills/scripts/sync_project_mapping.py` de quet lai thu muc `/mnt/projects/`, cap nhat lai `project-mapping.md` va lay duong dan moi nhat.
+     - **Neu tim thay**: Su dung ngay duong dan thu muc du an (0 lenh shell).
+     - **Neu KHÔNG tim thay**: Tu dong chay lenh `python3 /mnt/projects/study-ai-antigravity-skills/scripts/sync_project_mapping.py` de quet lai cac thu muc goc (`/mnt/projects/`, `/var/www/`, `/home/bss/`), cap nhat lai `project-mapping.md` va lay duong dan moi nhat.
    - Dat `Cwd` truc tiep vao thu muc du an do cho toan bo cac lenh tool call tiep theo.
 
 

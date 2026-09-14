@@ -1,8 +1,8 @@
 ---
-name: list-jira
+name: adam-list-jira
 description: >-
   Lists open Jira issues assigned to current user with automatic caching and field optimization.
-  Use when user types `/list-jira`, `list jira`, `my open issues`, or requests Jira task list.
+  Use when user types `/adam-list-jira`, `/list-jira`, `list jira`, `my open issues`, or requests Jira task list.
 ---
 
 # List Jira Issues Skill

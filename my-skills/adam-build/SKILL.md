@@ -1,11 +1,11 @@
 ---
-name: build
-description: Triggered when the user runs /build or asks to checkout develop, pull latest code, build WebPOS client, and compress into build.tar.
+name: adam-build
+description: Triggered when the user runs /adam-build or asks to checkout develop, pull latest code, build WebPOS client, and compress into build.tar.
 ---
 
 # WebPOS Client Build and Package Workflow
 
-Use this skill when the user runs `/build` or requests to package the WebPOS client for manual deployment.
+Use this skill when the user runs `/adam-build` or requests to package the WebPOS client for manual deployment.
 
 ## Workflow Steps
 
