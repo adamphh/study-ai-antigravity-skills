@@ -171,3 +171,9 @@ npm start
 npm run build
 ```
 
+---
+
+## Tài Liệu Tham Khảo (References)
+- 🔔 [React-Toastify Auto-Dismiss Fix Pattern (`ToastObserver`)](./references/react-toastify-auto-dismiss.md): Mẫu xử lý triệt để lỗi toast message bị treo khi mở Print Dialog hoặc tab bị blur.
+
+

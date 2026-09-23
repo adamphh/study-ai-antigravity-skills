@@ -18,9 +18,9 @@ MUST strictly follow this sequence:
 
 ```mermaid
 flowchart TD
-    A["0. Khởi tạo phiên, Định vị & Chuyển Workspace (project-mapping)"] --> B["1. Chuẩn bị Git Branch (Checkout release & Tạo branch task)"]
-    B --> C["2. Đọc Task Jira, Check Conversation & Đổi Tên Session"]
-    C --> D["3. Kiểm tra Môi Trường & Mục lục Code (Auto-Init & Auto-Index)"]
+    A["0. Khởi tạo phiên, Định vị & Chuyển Workspace (project-mapping)"] --> B["1. Kiểm tra Môi Trường & Mục lục Code (Auto-Init & Auto-Index)"]
+    B --> C["2. Chuẩn bị Git Branch (Checkout release & Tạo branch task)"]
+    C --> D["3. Đọc Task Jira, Check Conversation & Đổi Tên Session"]
     D --> E["4. Tra cứu Data Flow & Check trùng Plugin/Rewrite (qua Index)"]
     E --> F["5. Lập Kế Hoạch (Plan) & Phỏng vấn làm rõ (/grill-me)"]
     F --> G["6. Viết Code theo đúng Scope (Custom/FixBug & npm upgrade)"]
@@ -42,11 +42,15 @@ flowchart TD
      - **Nếu ĐÃ TỒN TẠI conversation cho issue này**: Ưu tiên gợi ý/mở tiếp conversation cũ để làm việc tiếp,
        kế thừa toàn bộ context và artifact đã có.
      - **Nếu CHƯA CÓ conversation**: Tiếp tục luồng xử lý trên workspace của dự án vừa chuyển.
-1. **Git Branch Preparation & Baseline Sync**:
+1. **Environment & Index Setup (Hard Requirement: Auto-Init & Auto-Index)**:
+   - Kiểm tra ngay lập tức sự tồn tại của `.agent` symlink và `docs/data-flows/INDEX.md` trong thư mục dự án vừa chuyển.
+   - Nếu chưa có hoặc thiếu cấu hình $\rightarrow$ thực thi ngay:
+     `ln -sf /mnt/projects/study-ai-antigravity-skills/.agent .agent && /mnt/projects/study-ai-antigravity-skills/scripts/index-refresh`.
+2. **Git Branch Preparation & Baseline Sync**:
    - Kiểm tra branch hiện tại (`git status`, `git branch --show-current`).
    - Đảm bảo branch phát triển bắt đầu từ nhánh `release` sạch: `git checkout release && git pull origin release`.
    - Tạo branch mới theo chuẩn: `git checkout -b feature/{ma_du_an}-{ma_issue}` (hoặc `fix/...`).
-2. **Fetch & Analyze Jira Task (Status Transition & Conversation Renaming)**:
+3. **Fetch & Analyze Jira Task (Status Transition & Conversation Renaming)**:
    - Tra cứu task qua `jira_get_issue` lấy summary, description, comments, acceptance criteria.
    - **Xử lý trạng thái Jira:**
      - Nếu trạng thái là **`To Do`** (hoặc `Open`, `Backlog`): Tự động chuyển sang **`In Progress`** (hoặc `In Process`) qua `jira_transition_issue`.
@@ -55,9 +59,6 @@ flowchart TD
      - Sau khi lấy thông tin task từ Jira/Git Branch và chuyển status (nếu là session mới chưa có trước đó):
        BẮT BUỘC đặt/đổi tên Conversation thành `{ma_du_an}-{ma_issue}-{noi_dung_task_tom_tat_20_ki_tu}`
        để đồng bộ 100% với tên file Plan và dễ dàng tìm kiếm/tiếp tục sau này.
-3. **Environment & Index Setup (Auto-Init & Auto-Index)**:
-   - Kiểm tra `.agent/` và `docs/` (chạy skill `init-project` nếu thiếu).
-   - Kiểm tra `docs/data-flows/INDEX.md`. Nếu chưa có (dự án mới) $\rightarrow$ spawn Subagent tạo bộ index 4 matrix.
 4. **Knowledge Retrieval & Conflict Audit via Index**:
    - Đọc đúng Data Flow liên quan đến domain của task (Payment, Cart, Reward...).
    - Mở `docs/data-flows/client/extension-plugins.md` / `extension-rewrites.md` đối soát xem method/class mục tiêu đã có extension nào can thiệp trước đó chưa (tránh xung đột logic mà không cần grep).

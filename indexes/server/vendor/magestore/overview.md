@@ -1,5 +1,5 @@
 <!-- INDEX_METADATA
-generated_at: 2026-09-04T16:49:52Z
+generated_at: 2026-09-23T13:25:20Z
 target_scope: vendor/Magestore
 -->
 
@@ -362,6 +362,7 @@ target_scope: vendor/Magestore
 
 | Class / Interface | Methods, Signatures & Line Numbers | Location |
 | :--- | :--- | :--- |
+| `Magestore\Fixbug\Rewrite\TransferStock\Controller\Adminhtml\InventoryTransfer\PrintTransfer` | N/A | [`PrintTransfer.php`](file:///mnt/projects/p1145-cashandretail/Source/server/app/code/Magestore/Fixbug/Rewrite/TransferStock/Controller/Adminhtml/InventoryTransfer/PrintTransfer.php) |
 | `Magestore\Fixbug\Rewrite\ReportSuccess\Model\Statistics\MagestoreStockValueStatistic` | N/A | [`MagestoreStockValueStatistic.php`](file:///mnt/projects/p1145-cashandretail/Source/server/app/code/Magestore/Fixbug/Rewrite/ReportSuccess/Model/Statistics/MagestoreStockValueStatistic.php) |
 | `Magestore\Fixbug\Plugin\SalesReport\Model\Source\Location` | `aroundGetOptionArray(BaseLocation $subject, \Closure $proceed)` (#L28) | [`Location.php`](file:///mnt/projects/p1145-cashandretail/Source/server/app/code/Magestore/Fixbug/Plugin/SalesReport/Model/Source/Location.php) |
 | `Magestore\Fixbug\Plugin\ReportSuccess\Controller\Adminhtml\Inventory\Download` | `aroundExecute(BaseDownload $subject, callable $proceed)` (#L17) | [`Download.php`](file:///mnt/projects/p1145-cashandretail/Source/server/app/code/Magestore/Fixbug/Plugin/ReportSuccess/Controller/Adminhtml/Inventory/Download.php) |

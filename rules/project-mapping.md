@@ -37,6 +37,7 @@
 | `P1062` | `/mnt/projects/p1062-jw.com.au` | `p1062-jw.com.au` |
 | `P1073` | `/mnt/projects/p1073-shopmonash-edu` | `p1073-shopmonash-edu` |
 | `P1076` | `/mnt/projects/p1076-nessswimwear-co-uk` | `p1076-nessswimwear-co-uk` |
+| `P1082` | `/mnt/projects/p1082-raoulchagnon-com-WIT` | `p1082-raoulchagnon-com-WIT` |
 | `P1082` | `/mnt/projects/p1082-raoulchagnon-com-wit` | `p1082-raoulchagnon-com-wit` |
 | `P1084` | `/mnt/projects/p1084-caprinesupply-com` | `p1084-caprinesupply-com` |
 | `P1091` | `/mnt/projects/P1091-outlawracing.nl` | `P1091-outlawracing.nl` |
@@ -63,6 +64,7 @@
 | `P1145` | `/mnt/projects/p1145-cashandretail` | `p1145-cashandretail` |
 | `P1146` | `/mnt/projects/p1146-constellationmusical-com` | `p1146-constellationmusical-com` |
 | `P1147` | `/mnt/projects/p1147-talarms-co-uk` | `p1147-talarms-co-uk` |
+| `P1150` | `/mnt/projects/p1150-scrapbooktendance-ca` | `p1150-scrapbooktendance-ca` |
 | `P1154` | `/mnt/projects/p1154-hoptap-com` | `p1154-hoptap-com` |
 | `P1157` | `/mnt/projects/p1157-luluatalmaghrib-com` | `p1157-luluatalmaghrib-com` |
 | `P1164` | `/mnt/projects/p1164-keywestaloe-com` | `p1164-keywestaloe-com` |
