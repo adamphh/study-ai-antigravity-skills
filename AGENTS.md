@@ -185,13 +185,14 @@
 - **Rewrite Mechanism**:
   - For overriding class methods or properties, create rewrite files under `src/extension/<extension_name>/rewrite/`.
   - Register rewrites in `src/extension/<extension_name>/etc/config.js` under the `rewrite` block.
-  - Use wrapper functions for rewrites:
+  - Use named wrapper functions for rewrites (avoiding anonymous default export):
     ```javascript
-    export default function (BaseClass) {
-        return class Rewrite extends BaseClass {
+    const ComponentRewrite = (BaseClass) => {
+        return class ComponentRewriteClass extends BaseClass {
             // Overridden methods or properties
         };
-    }
+    };
+    export default ComponentRewrite;
     ```
 - **Plugins (Before, Around, After)**:
   - Register plugins in the `plugin` block of `etc/config.js` to modify arguments, wrap execution, or alter
@@ -208,10 +209,13 @@
     as an argument.
 
 ### WebPOS Extension Code Rules
-- **Quy định Export JS trong WebPOS Extension (Tránh lỗi ESLint):** Khi viết các file plugin/helper/service
-  JS trong WebPOS client, tuyệt đối KHÔNG `export default` trực tiếp object vô danh (`export default { ... }`).
-  Bắt buộc khai báo gán vào hằng số/biến có tên trước khi `export default` (ví dụ: `const PluginName = { ... };
-  export default PluginName;`) để đảm bảo tuân thủ ESLint rule `import/no-anonymous-default-export`.
+- **Quy định Export JS trong WebPOS Extension (Tránh lỗi ESLint):** Khi viết các file plugin/helper/service/rewrite
+  JS trong WebPOS client, tuyệt đối KHÔNG `export default` trực tiếp object vô danh (`export default { ... }`) hoặc
+  function vô danh (`export default function (BaseClass) { ... }`).
+  Bắt buộc khai báo gán vào hằng số/biến có tên trước khi `export default` (ví dụ:
+  `const PluginName = { ... }; export default PluginName;` hoặc
+  `const ComponentRewrite = (BaseClass) => { ... }; export default ComponentRewrite;`)
+  để đảm bảo tuân thủ ESLint rule `import/no-anonymous-default-export`.
 - **Quy định Nạp Dependency trong WebPOS JS Extension (WebPOS Extension Require Standard):** Khi viết các file
   plugin/rewrite/mixin/observer JS trong WebPOS client (`src/extension/`), ngoại trừ React, tất cả các
   Service/Helper/Constant hoặc Component tham chiếu từ core BẮT BUỘC phải nạp bằng cú pháp `require("...").default`
