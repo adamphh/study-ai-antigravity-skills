@@ -51,3 +51,43 @@ Các class Extension Interface (như `ProductExtensionInterface`, `ItemExtension
 
 ## 8. No Empty Catch Block Rule
 Trong các khối `try ... catch (\Exception $e)` (hoặc `\Throwable $e` cho Observer/Critical I/O), TUYỆT ĐỐI KHÔNG để khối `catch` rỗng không có câu lệnh xử lý (gây cảnh báo PHPCS `Empty CATCH statement detected`). Phải ghi log lỗi qua `$this->logger->error(...)` hoặc có câu lệnh gán biến fallback (ví dụ `$result = null;`).
+
+## 9. OpenSearch & Elasticsearch Field Mapping & Filter Invariants
+Khi cấu hình hoặc phát triển tìm kiếm với OpenSearch/Elasticsearch trên Magento 2 & WebPOS:
+
+1. **Chuẩn hóa Field Mapping cho các bộ lọc chính xác (`term` / `terms` / `range`)**:
+   - Mọi trường dùng cho bộ lọc chính xác trong `search_request.xml` (như `stock_id`, `type_id`, `category_ids`, `barcode`) **BẮT BUỘC** phải được khai báo dạng `INTERNAL_DATA_TYPE_KEYWORD` hoặc `INTERNAL_DATA_TYPE_INT` trong Field Provider/Mapper.
+   - **Tuyệt đối KHÔNG** dùng `INTERNAL_DATA_TYPE_STRING` vì OpenSearch sẽ map thành `"type": "text"`. Trong OpenSearch, bộ lọc `term` / `terms` query chạy trên trường `text` sẽ bị sai lệch hoặc trả về 0 kết quả.
+
+2. **Rà soát thuộc tính `Use in Search` khi dùng trong `<match field="..."/>`**:
+   - Khi thêm bất kỳ trường nào vào mệnh đề `<match field="..."/>` trong `search_request.xml`, bắt buộc đảm bảo thuộc tính EAV tương ứng đã được bật `is_searchable = 1` (`Use in Search = Yes`).
+   - Nếu thuộc tính bị tắt `Use in Search`, OpenSearch sẽ ném lỗi Fatal HTTP 400 `Cannot search on field [xxx] since it is not indexed.` và Magento Search Adapter sẽ âm thầm trả về kết quả rỗng.
+
+## 10. Magento 2 Product Type Instance Retrieval Invariants
+Khi làm việc với Product Type (Simple, Configurable, Bundle, Grouped...) trong Observer/Plugin/Service:
+
+1. **Không gọi `getParentIdsByChild()` hay method nghiệp vụ trực tiếp trên `$productType->getTypes()`**:
+   - `$productType->getTypes()` (`\Magento\Catalog\Model\Product\Type::getTypes()`) chỉ trả về mảng metadata cấu hình (`array`), KHÔNG PHẢI đối tượng Type instance.
+   - Gọi trực tiếp method trên mảng này sẽ gây lỗi fatal: `Call to a member function getParentIdsByChild() on array`.
+
+2. **Quy chuẩn khởi tạo & truy xuất Type Instance**:
+   - **Trong Plugin:** Nếu class gốc (`$subject`) đã có method public cung cấp type instances (ví dụ `getProductTypeInstances()`), **BẮT BUỘC** ưu tiên gọi qua `$subject->getProductTypeInstances()`.
+   - **Khởi tạo độc lập:** Khi tự khởi tạo, bắt buộc dùng `ProductEmulator` DataObject kết hợp `$productType->factory($emulator)`:
+     ```php
+     $productEmulator = new \Magento\Framework\DataObject();
+     foreach (array_keys($this->productType->getTypes()) as $typeId) {
+         $productEmulator->setTypeId($typeId);
+         $this->productTypes[$typeId] = $this->productType->factory($productEmulator);
+     }
+     ```
+   - **Type Safety Check:** Luôn kiểm tra `is_object($typeInstance) && method_exists($typeInstance, 'methodName')` trước khi gọi thực thi.
+
+## 11. WebPOS Client Async Storage & Recursive Retry Invariants
+1. **Bắt buộc `await` các tác vụ I/O Database trong vòng lặp Sync**:
+   - Trong các Epic/Service đồng bộ dữ liệu (`requestData`, `SyncDataWithTypeEpic`, `updateItems`), các lệnh ghi IndexedDB như `service.saveToDb(items)` **BẮT BUỘC PHẢI CÓ `await`**.
+   - Việc không `await` trong vòng lặp lớn (nhiều trang) sẽ giải phóng hàng loạt unhandled write transaction song song lên Dexie, gây nghẽn hàng đợi (Transaction Queue Overload), lock contention và khiến tiến trình lưu bảng `sync` bị ngắt quãng/treo giữa chừng.
+
+2. **Tránh dùng toán tử Post-increment (`requestTime++`) trong hàm Retry đệ quy**:
+   - Khi viết hàm retry đệ quy xử lý lỗi IndexedDB/Fetch, **TUYỆT ĐỐI KHÔNG** truyền `requestTime++` (vì toán tử hậu tố truyền giá trị cũ trước khi tăng, khiến biến đếm lần thử không bao giờ đạt ngưỡng thoát `requestTime > 10`).
+   - Bắt buộc dùng `++requestTime` hoặc `requestTime + 1`.
+
