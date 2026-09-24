@@ -181,9 +181,89 @@ else
 fi
 
 # ------------------------------------------------------------------------------
-# 7. Pre-generate Shared Core Indexes
+# 7. Configure Antigravity CLI Permissions (Safe Read-only & Block Dangerous Commands)
 # ------------------------------------------------------------------------------
-echo -e "\n${YELLOW}[7/7] Generating shared core indexes (Tầng 1)...${NC}"
+echo -e "\n${YELLOW}[7/8] Configuring CLI permissions in settings.json...${NC}"
+
+SETTINGS_FILE="$HOME/.gemini/antigravity-cli/settings.json"
+mkdir -p "$HOME/.gemini/antigravity-cli"
+
+python3 -c "
+import json
+import os
+
+path = '$SETTINGS_FILE'
+data = {}
+if os.path.exists(path):
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except Exception:
+        data = {}
+
+permissions = data.get('permissions', {})
+current_allow = permissions.get('allow', [])
+current_deny = permissions.get('deny', [])
+
+deny_items = [
+    'command(find * -delete*)',
+    'command(find *-delete*)',
+    'command(find * -exec*)',
+    'command(find *-exec*)',
+    'command(find * -ok*)',
+    'command(rm)',
+    'command(rmdir)',
+    'command(delete)',
+    'command(remove)',
+    'command(chmod)',
+    'command(chown)',
+    'command(chgrp)',
+    'command(truncate)',
+    'command(sed -i)',
+    'command(dd)',
+    'command(mv)'
+]
+
+safe_allow_items = [
+    'command(find)',
+    'command(grep)',
+    'command(cat)',
+    'command(ls)',
+    'command(head)',
+    'command(tail)',
+    'command(wc)',
+    'command(which)',
+    'command(pwd)',
+    'command(awk)',
+    'command(git status)',
+    'command(git branch)',
+    'command(git log)',
+    'command(git diff)',
+    'command(git show)',
+    'command(git remote)'
+]
+
+for item in deny_items:
+    if item not in current_deny:
+        current_deny.append(item)
+
+for item in safe_allow_items:
+    if item not in current_allow:
+        current_allow.append(item)
+
+permissions['allow'] = current_allow
+permissions['deny'] = current_deny
+data['permissions'] = permissions
+
+with open(path, 'w', encoding='utf-8') as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+"
+echo -e "${GREEN}✓ CLI permissions configured (Safe Read-only allowed, dangerous commands denied).${NC}"
+
+# ------------------------------------------------------------------------------
+# 8. Pre-generate Shared Core Indexes
+# ------------------------------------------------------------------------------
+echo -e "\n${YELLOW}[8/8] Generating shared core indexes (Tầng 1)...${NC}"
 
 if [ -f "$TARGET_DIR/scripts/index_core.py" ]; then
     python3 "$TARGET_DIR/scripts/index_core.py" || true
