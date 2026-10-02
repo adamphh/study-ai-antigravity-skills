@@ -19,15 +19,19 @@ MUST strictly follow this sequence:
 ```mermaid
 flowchart TD
     A["0. Khởi tạo phiên, Định vị & Chuyển Workspace (project-mapping)"] --> B["1. Kiểm tra Môi Trường & Mục lục Code (Auto-Init & Auto-Index)"]
-    B --> C["2. Chuẩn bị Git Branch (Checkout release & Tạo branch task)"]
-    C --> D["3. Đọc Task Jira, Check Conversation & Đổi Tên Session"]
+    B --> C["2. Đọc Task Jira, Safe Transition & Đổi Tên Session"]
+    C --> D["3. Chuẩn bị Git Branch (Checkout release & Tạo branch task)"]
     D --> E["4. Tra cứu Data Flow & Check trùng Plugin/Rewrite (qua Index)"]
     E --> F["5. Lập Kế Hoạch (Plan) & Phỏng vấn làm rõ (/grill-me)"]
     F --> G["6. Viết Code theo đúng Scope (Custom/FixBug & npm upgrade)"]
     G --> H["7. Chạy Test Tự Động (Docker/NPM) & Dọn file rác"]
     H --> I["8. Viết Walkthrough & Soi lại Git Diff"]
-    I --> J["9. Subagent Review & Architecture Audit"]
-    J --> K["10. Commit chuẩn format & Gợi ý /learn"]
+    I --> J["9. Subagent Review & Architecture Audit (Gatekeeper)"]
+    J -- "Chưa PASS (Tối đa 3 lần lặp)" --> E
+    J -- "Vẫn Chưa PASS (Quá 3 lần)" --> ESC["DỪNG LẠI & Báo cáo Lập trình viên"]
+    ESC -- "Chỉ đạo giải pháp / Sửa tay" --> E
+    ESC -- "Chấp nhận ngoại lệ (Force Pass)" --> K["10. Cập nhật Index, Commit, Push & Gợi ý /learn"]
+    J -- "PASS 100%" --> K
 ```
 
 0. **Project Navigation, Workspace Switch & Conversation Check**:
@@ -46,19 +50,20 @@ flowchart TD
    - Kiểm tra ngay lập tức sự tồn tại của `.agent` symlink và `docs/data-flows/INDEX.md` trong thư mục dự án vừa chuyển.
    - Nếu chưa có hoặc thiếu cấu hình $\rightarrow$ thực thi ngay:
      `ln -sf /mnt/projects/study-ai-antigravity-skills/.agent .agent && /mnt/projects/study-ai-antigravity-skills/scripts/index-refresh`.
-2. **Git Branch Preparation & Baseline Sync**:
-   - Kiểm tra branch hiện tại (`git status`, `git branch --show-current`).
-   - Đảm bảo branch phát triển bắt đầu từ nhánh `release` sạch: `git checkout release && git pull origin release`.
-   - Tạo branch mới theo chuẩn: `git checkout -b feature/{ma_du_an}-{ma_issue}` (hoặc `fix/...`).
-3. **Fetch & Analyze Jira Task (Status Transition & Conversation Renaming)**:
-   - Tra cứu task qua `jira_get_issue` lấy summary, description, comments, acceptance criteria.
+2. **Fetch Jira Task, Safe Transition & Session Renaming**:
+   - Tra cứu task qua `jira_get_issue` lấy issue type (Bug / Story / Task), summary, description, comments, criteria.
    - **Xử lý trạng thái Jira:**
      - Nếu trạng thái là **`To Do`** (hoặc `Open`, `Backlog`): Tự động chuyển sang **`In Progress`** (hoặc `In Process`) qua `jira_transition_issue`.
      - Nếu trạng thái **KHÔNG PHẢI `To Do`** (đã là `In Progress`, `In Review`, `Done`...): **TUYỆT ĐỐI KHÔNG ĐƯỢC THAY ĐỔI TRẠNG THÁI**.
    - **Đổi tên Conversation (Session Renaming)**:
-     - Sau khi lấy thông tin task từ Jira/Git Branch và chuyển status (nếu là session mới chưa có trước đó):
-       BẮT BUỘC đặt/đổi tên Conversation thành `{ma_du_an}-{ma_issue}-{noi_dung_task_tom_tat_20_ki_tu}`
+     - BẮT BUỘC đặt/đổi tên Conversation thành `{ma_du_an}-{ma_issue}-{noi_dung_task_tom_tat_20_ki_tu}`
        để đồng bộ 100% với tên file Plan và dễ dàng tìm kiếm/tiếp tục sau này.
+3. **Git Branch Preparation & Baseline Sync**:
+   - Kiểm tra branch hiện tại (`git status`, `git branch --show-current`).
+   - Đảm bảo branch phát triển bắt đầu từ nhánh `release` sạch: `git checkout release && git pull origin release`.
+   - Tạo branch mới chuẩn xác theo loại task từ Jira:
+     - Nếu là Bug: `git checkout -b fix/{ma_du_an}-{ma_issue}-{noi_dung_task_tom_tat}`.
+     - Nếu là Feature / Story / Task: `git checkout -b feature/{ma_du_an}-{ma_issue}-{noi_dung_task_tom_tat}`.
 4. **Knowledge Retrieval & Conflict Audit via Index**:
    - Đọc đúng Data Flow liên quan đến domain của task (Payment, Cart, Reward...).
    - Mở `docs/data-flows/client/extension-plugins.md` / `extension-rewrites.md` đối soát xem method/class mục tiêu đã có extension nào can thiệp trước đó chưa (tránh xung đột logic mà không cần grep).
@@ -69,22 +74,36 @@ flowchart TD
 6. **Code Implementation (Strict Scope)**:
    - Triển khai code trong vùng cho phép (`*Custom*`, `*FixBug*` / `src/extension/`).
    - Nếu tạo module extension WebPOS mới: Bắt buộc chạy `npm run upgrade` để đăng ký vào `modules.json`.
-   - Bổ sung entry mới vào file index `docs/data-flows/`.
 7. **Automated Testing & Artifact Cleanup**:
    - Chạy test tự động qua Docker container (`docker exec phpunit`) hoặc NPM.
    - **Bắt buộc tự động xóa bỏ toàn bộ file test tạm thời trước khi chuyển bước.**
 8. **Walkthrough & Git Diff Verification**:
    - Ghi nhận kết quả thực thi vào `walkthrough.md`.
    - Tự rà soát `git diff` đảm bảo: Dòng code <= 120 ký tự, Copyright Header, Thẻ XML match 100%.
-9. **Subagent Code Review, SQL Security & Architecture Audit**:
+9. **Subagent Code Review, SQL Security & Architecture Audit (Gatekeeper Step)**:
    - Gọi Subagent độc lập (`Role: Code Reviewer & Architecture Auditor`) thực thi 3 nhiệm vụ:
      1. Soi lại diff tìm rủi ro mã nguồn (Memory Leak, Race Condition, Null Pointer Safety, Type Safety).
      2. **Kiểm toán Bảo mật & Hiệu năng SQL (SQL Security & Performance Audit)**: Chống SQL Injection (bắt buộc dùng
         bind variables/quoteInto), chặn lỗi N+1 query trong loop, tránh DB deadlocks, và kiểm tra quyền truy xuất.
      3. **Kiểm toán Kiến trúc (Architecture & System Audit)**: Phát hiện pattern mới cần đóng gói thành Skill/Rule,
         hoặc phát hiện mâu thuẫn/nghẽn trong hệ thống rules để đề xuất cải tiến có điều kiện.
-10. **Git Commit Standards & Proactive Learning**:
-    - Commit đúng chuẩn: `{Fix/Feat} [{mã dự án} - {issue id}]: {ticket ID/summary}`.
+   - **Điều kiện Chuyển Tiếp & Cơ chế Ngắt Vòng Lặp (Gatekeeper & Circuit Breaker Rule):**
+     - **Nếu Subagent kết luận CHƯA PASS** (phát hiện lỗi logic, rủi ro bảo mật, memory leak, hoặc vi phạm coding standards):
+       - **Lặp lại tối đa 3 lần (Max 3 Retries)**: Bắt buộc quay lại từ **Bước 4** (Đối soát Data Flow, cập nhật Plan, sửa code và test lại từ đầu).
+       - **Kích hoạt Circuit Breaker (Khi đã lặp lại quá 3 lần vẫn KHÔNG PASS)**:
+         1. **DỪNG NGAY LẬP TỨC**: Tuyệt đối không tự ý lặp lại lần thứ 4 và không được commit/push code.
+         2. **Báo cáo Bế tắc (Escalation Report)**: Gửi báo cáo chi tiết cho lập trình viên gồm:
+            - *Tiêu chí / Lỗi cụ thể mà Subagent đánh giá chưa đạt.*
+            - *Tóm tắt các giải pháp/cách sửa đã thử trong 3 lần lặp vừa qua.*
+            - *2–3 Đề xuất hướng xử lý tiếp theo.*
+         3. **Chờ chỉ đạo của Lập trình viên**:
+            - Nếu lập trình viên hướng dẫn giải pháp $\rightarrow$ Thực hiện theo hướng dẫn và chạy lại review.
+            - Nếu lập trình viên xác nhận ngoại lệ (Force Pass) $\rightarrow$ Mới được chuyển sang Bước 10.
+     - **Nếu Subagent kết luận PASS 100%**: Mới được phép chuyển sang Bước 10.
+10. **Index Refresh, Git Commit, Push Code & Proactive Learning**:
+    - Chỉ thực hiện khi đã vượt qua vòng kiểm duyệt (PASS 100%) tại Bước 9.
+    - **Tự động cập nhật Bộ Index**: Bổ sung Plugin/Rewrite/Class mới vào `docs/data-flows/` hoặc chạy script làm mới index để tránh stale index cho các phiên sau.
+    - Commit và push code đúng chuẩn: `{Fix/Feat} [{mã dự án} - {issue id}]: {ticket ID/summary}`.
     - Đề xuất chạy `/learn` nếu task có bài học/kinh nghiệm quý cần ghi nhớ.
 
 ## 3. Communication & Clarification Mandate
