@@ -91,3 +91,37 @@ Khi làm việc với Product Type (Simple, Configurable, Bundle, Grouped...) tr
    - Khi viết hàm retry đệ quy xử lý lỗi IndexedDB/Fetch, **TUYỆT ĐỐI KHÔNG** truyền `requestTime++` (vì toán tử hậu tố truyền giá trị cũ trước khi tăng, khiến biến đếm lần thử không bao giờ đạt ngưỡng thoát `requestTime > 10`).
    - Bắt buộc dùng `++requestTime` hoặc `requestTime + 1`.
 
+## 12. Input & Configuration Trimming / Sanitization Invariants
+Khi đọc các giá trị cấu hình (`ScopeConfigInterface`), tham số request (`RequestInterface`), hoặc xử lý chuỗi nhập liệu từ người dùng (đặc biệt là thông tin xác thực API, Payment Gateway, OAuth Credentials, Token, URLs):
+
+1. **Bắt buộc `trim()` dữ liệu chuỗi cấu hình & tham số xác thực**:
+   - Mọi giá trị cấu hình dạng chuỗi nhạy cảm (`client_id`, `client_secret`, `api_key`, `access_token`, `code`, `merchant_id`...) **BẮT BUỘC** phải được bọc qua `trim((string)$value)` trước khi đưa vào Payload gửi sang bên thứ 3 hoặc tính toán chữ ký số (Hash / HMAC / Signature).
+   - *Lý do*: Người dùng hoặc Admin thường vô tình copy thừa khoảng trắng ở đầu/cuối (`whitespace`), gây lỗi xác thực API cực kỳ khó phát hiện bằng mắt thường hoặc log thông thường.
+
+2. **Chuẩn hóa URL Base (`rtrim`)**:
+   - Đối với các cấu hình URL Endpoint/Base URL, luôn dùng `rtrim((string)$url, '/')` để loại bỏ dấu gạch chéo thừa ở cuối trước khi nối với đường dẫn API con (tránh lỗi double slash `//`).
+
+3. **Cú pháp mẫu chuẩn trong Service / Controller**:
+   ```php
+   $clientId = trim((string)$this->scopeConfig->getValue(
+       self::XML_PATH_CLIENT_ID,
+       ScopeInterface::SCOPE_WEBSITE,
+       $websiteId
+   ));
+   $clientSecret = trim((string)$this->encryptor->decrypt(
+       $this->scopeConfig->getValue(self::XML_PATH_CLIENT_SECRET, ScopeInterface::SCOPE_WEBSITE, $websiteId)
+   ));
+   $authCode = trim((string)($this->request->getParam('code') ?? ''));
+   ```
+
+## 13. Magento 2 Fresh Entity Reloading & State Sync Invariants
+Khi phát triển Plugin / Observer can thiệp hoặc đồng bộ trạng thái đơn hàng (Order State/Status) sau các thao tác ghi nhận giao dịch (Creditmemo, Invoice, Shipment):
+
+1. **Tránh Stale In-Memory Cache của `OrderRepository`**:
+   - `\Magento\Sales\Model\OrderRepository::get()` duy trì cache nội bộ (`$registry`). Sau khi một Creditmemo/Shipment/Invoice được lưu, entity Order trong `$registry` có thể chứa dữ liệu cũ chưa được cập nhật (`total_refunded`, `qty_refunded`, `state`...).
+   - **Bắt buộc**: Sử dụng `OrderFactory::create()->load($orderId)` để tải bản ghi mới nhất trực tiếp từ cơ sở dữ liệu khi cần kiểm tra trạng thái và cập nhật `state`/`status` đơn hàng.
+
+2. **Bảo toàn Order State Machine trong Item Plugins**:
+   - Khi viết Plugin can thiệp `Item::getQtyToShip()`, BẮT BUỘC phải kiểm tra điều kiện biên tuyệt đối: nếu `qty_ordered <= qty_refunded + qty_canceled` hoặc `qty_ordered <= qty_shipped + qty_canceled`, lập tức trả về `0.0`.
+   - Tránh việc trả về `qty_to_ship > 0` cho các item đã hoàn toàn bộ khiến Magento Core hiểu nhầm đơn hàng vẫn còn hàng để giao (`$order->canShip() === true`), gây kẹt trạng thái `processing`.
+
