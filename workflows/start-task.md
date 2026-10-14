@@ -43,6 +43,7 @@ Workflow khoi tao phien lam viec cho task moi theo dung quy chuan:
    - Cho lap trinh vien phe duyet ke hoach truoc khi tien hanh code.
 
 6. **Buoc 5: Quy Chuan Ket Thuc Task & Toi Uu Token**
+   - **Chay Linter Tu Dong**: Bắt buộc chạy `python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py` kiem tra 120 ky tu, XML match, EOF newline trong 0.2s truoc khi review.
    - Truoc khi tao `walkthrough.md`, nhac nguoi dung chay `/compact`.
    - Chi xuat **Khoi goi y lenh Git (Git Suggestion Block)** cho nguoi dung tu chay o terminal ngoai.
    - Chi goi Subagent Review voi cac task rui ro cao (Payment, Stock, Sync, Core API).

@@ -84,10 +84,10 @@ flowchart TD
 7. **Automated Testing & Artifact Cleanup**:
    - Chạy test tự động qua Docker container (`docker exec phpunit`) hoặc NPM.
    - **Bắt buộc tự động xóa bỏ toàn bộ file test tạm thời trước khi chuyển bước.**
-8. **Walkthrough & Git Diff Verification (Kèm Gợi ý /compact)**:
+8. **Walkthrough & Git Diff Verification (Tự Động Chạy adam-code-linter & Nhắc /compact)**:
+   - **Tự động chạy `adam-code-linter`**: AI BẮT BUỘC thực thi script `python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py` để kiểm tra độ dài dòng <= 120 ký tự, XML match 100%, EOF newline và Copyright header trong 0.2s. Nếu linter báo lỗi, phải sửa ngay lập tức.
    - **Chủ động nhắc /compact**: Trước khi xuất bản tài liệu dài `walkthrough.md`, AI gợi ý người dùng gõ `/compact` để giải phóng context window.
    - Ghi nhận kết quả thực thi vào `walkthrough.md`.
-   - Tự rà soát `git diff` đảm bảo: Dòng code <= 120 ký tự, Copyright Header, Thẻ XML match 100%.
 9. **Code Review & Architecture Audit (Conditional Subagent Trigger)**:
    - **Phân loại Task để kích hoạt Reviewer**:
      - **Nhóm 1 - Rủi ro cao (BẮT BUỘC gọi Subagent `Code Reviewer & Architecture Auditor`)**:
