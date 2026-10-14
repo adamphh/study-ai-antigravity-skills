@@ -7,12 +7,13 @@
 - Nếu tìm thấy extension trùng lặp, AI phải báo cáo danh sách cụ thể cho lập trình viên để cùng đối soát logic,
   tránh xung đột hoặc đè logic lẫn nhau.
 
-## 2. Git Commit Amend Rule
-- Trước khi thực hiện `git commit`, AI phải dùng `git log -n 5` kiểm tra xem trên nhánh (branch) hiện tại đã có
-  commit nào do AI thực hiện cho cùng mã Task/Issue này hay chưa.
-- Nếu đã có commit trước đó cho task/issue hiện tại, AI BẮT BUỘC phải sử dụng `git commit --amend`
-  (hoặc `git commit --amend --no-edit`) để gộp các thay đổi mới vào commit trước đó, đảm bảo không tạo thêm các
-  commit rác trên lịch sử git repository.
+## 2. Git Commit Suggestion & Amend Rule (Chỉ Gợi Ý Lệnh, Không Chạy Terminal)
+- **Quy tắc Tối ưu Token**: Để tiết kiệm 100% token cho thao tác Git cuối task, AI TUYỆT ĐỐI KHÔNG tự chạy chuỗi lệnh `git add`, `git commit`, `git push` qua terminal.
+- Thay vào đó, AI kiểm tra lịch sử commit và tạo sẵn **Khối gợi ý lệnh Git (Git Suggestion Block)** hoàn chỉnh:
+  - Nếu đã có commit trước đó cho task/issue hiện tại: Gợi ý lệnh `git commit --amend` (hoặc `git commit --amend --no-edit`).
+  - Nếu là commit mới: Gợi ý cú pháp chuẩn `{Fix/Feat} [{mã dự án} - {issue id}]: {ticket ID/summary}`.
+  - Kèm sẵn lệnh `git push origin <branch>` (hoặc `-f` nếu amend).
+- Lập trình viên chỉ cần sao chép khối lệnh và chạy trực tiếp trên máy của mình.
 
 ## 3. Quy tắc Vòng đời Phân nhánh Git & Xử lý Conflict (Git Branching Lifecycle & Conflict Resolution)
 - **Vòng đời Phân nhánh Git Chuẩn (Git Branching & Release Lifecycle)**:

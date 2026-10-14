@@ -24,4 +24,24 @@ Quy tắc tối ưu hóa Token và Hiệu năng làm việc dành cho AI Agent t
 ---
 
 ## 4. Task-Based Session Boundary (Phân định Ngữ cảnh theo Task)
-- **Quy tắc**: Sau khi hoàn thành 1 Task, thực hiện `git commit` & `git push` và cập nhật tệp `walkthrough.md`, AI nên chủ động gợi ý người dùng khởi tạo Session mới cho Task tiếp theo để đảm bảo bộ nhớ hội thoại luôn sạch sẽ và tối ưu Token.
+- **Quy tắc**: Sau khi hoàn thành 1 Task, hiển thị khối gợi ý lệnh Git và cập nhật tệp `walkthrough.md`, AI nên chủ động gợi ý người dùng khởi tạo Session mới cho Task tiếp theo để đảm bảo bộ nhớ hội thoại luôn sạch sẽ và tối ưu Token.
+
+---
+
+## 5. Prompt Clarity Gate (Bộ Lọc Kiểm Tra Độ Rõ Ràng Đầu Vào)
+- **Quy tắc**: Trước khi thực hiện bất kỳ thao tác tra cứu mã nguồn hay sinh code nào, AI BẮT BUỘC phải đánh giá xem Prompt của người dùng đã đủ 3 yếu tố:
+  1. Mục tiêu cụ thể (sửa lỗi gì, thêm tính năng gì, ở module nào)?
+  2. Điều kiện đầu vào / mong muốn đầu ra rõ ràng?
+  3. Vị trí nghi vấn hoặc ngữ cảnh tối thiểu (file, màn hình, mã issue)?
+- **Xử lý khi mơ hồ**: TUYỆT ĐỐI KHÔNG tự phán đoán rồi đi quét toàn bộ codebase (gây tốn hàng chục nghìn tokens vô ích). AI phải lập tức dừng lại, dùng công cụ `ask_question` hoặc hỏi trực tiếp các câu hỏi ngắn gọn/trắc nghiệm để người dùng làm rõ.
+
+---
+
+## 6. Mandatory /compact Prompting before Large Documents
+- **Quy tắc**: Vì lệnh `/compact` là lệnh UI chỉ người dùng mới có thể kích hoạt, nên TRƯỚC KHI bắt tay vào viết tài liệu dài (`walkthrough.md`) hoặc trước khi tổng kết đúc kết kiến thức (`/learn`), AI BẮT BUỘC phải dừng lại một nhịp và thông báo:
+  `📌 Gợi ý tiết kiệm Token: Phiên làm việc đã trải qua nhiều bước. Bạn vui lòng gõ lệnh /compact trong khung chat để nén gọn bộ nhớ context trước khi tôi xuất bản tài liệu chi tiết.`
+
+---
+
+## 7. Git Suggestion Standard (Chỉ Gợi Ý Lệnh Git, Không Chạy Terminal)
+- **Quy tắc**: Để tiết kiệm 100% token cho thao tác Git cuối phiên, AI TUYỆT ĐỐI KHÔNG tự chạy chuỗi lệnh `git commit` hay `git push` qua terminal. AI chỉ hiển thị khối lệnh Git chuẩn duy nhất để người dùng copy chạy trên máy của mình.

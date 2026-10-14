@@ -18,23 +18,29 @@ MUST strictly follow this sequence:
 
 ```mermaid
 flowchart TD
-    A["0. Khởi tạo phiên, Định vị & Chuyển Workspace (project-mapping)"] --> B["1. Kiểm tra Môi Trường & Mục lục Code (Auto-Init & Auto-Index)"]
+    A["0. Khởi tạo phiên, Prompt Clarity Check & Chuyển Workspace"] --> B["1. Kiểm tra Môi Trường & Mục lục Code (Auto-Init & Auto-Index)"]
     B --> C["2. Đọc Task Jira, Safe Transition & Đổi Tên Session"]
     C --> D["3. Chuẩn bị Git Branch (Checkout release & Tạo branch task)"]
     D --> E["4. Tra cứu Data Flow & Check trùng Plugin/Rewrite (qua Index)"]
     E --> F["5. Lập Kế Hoạch (Plan) & Phỏng vấn làm rõ (/grill-me)"]
     F --> G["6. Viết Code theo đúng Scope (Custom/FixBug & npm upgrade)"]
     G --> H["7. Chạy Test Tự Động (Docker/NPM) & Dọn file rác"]
-    H --> I["8. Viết Walkthrough & Soi lại Git Diff"]
-    I --> J["9. Subagent Review & Architecture Audit (Gatekeeper)"]
-    J -- "Chưa PASS (Tối đa 3 lần lặp)" --> E
-    J -- "Vẫn Chưa PASS (Quá 3 lần)" --> ESC["DỪNG LẠI & Báo cáo Lập trình viên"]
+    H --> I["8. Nhắc /compact, Viết Walkthrough & Soi lại Git Diff"]
+    I --> J{"9. Rà Soát Code: Rủi Ro Cao hay Thấp?"}
+    J -- "Rủi ro thấp / UI/UX" --> J1["Main Agent Tự Rà Soát (Tiết kiệm ~50k Token)"]
+    J -- "Rủi ro cao (Payment/Stock/Sync)" --> J2["Gọi Subagent Code Reviewer (Gatekeeper)"]
+    J2 -- "Chưa PASS (Tối đa 3 lần)" --> E
+    J2 -- "Quá 3 lần" --> ESC["DỪNG LẠI & Báo cáo Lập trình viên"]
     ESC -- "Chỉ đạo giải pháp / Sửa tay" --> E
-    ESC -- "Chấp nhận ngoại lệ (Force Pass)" --> K["10. Cập nhật Index, Commit, Push & Gợi ý /learn"]
-    J -- "PASS 100%" --> K
+    ESC -- "Chấp nhận ngoại lệ (Force Pass)" --> K["10. Cập nhật Index, Gợi Ý Lệnh Git & Gợi ý /learn"]
+    J1 -- "PASS Checklist" --> K
+    J2 -- "PASS 100%" --> K
 ```
 
-0. **Project Navigation, Workspace Switch & Conversation Check**:
+0. **Project Navigation, Workspace Switch, Prompt Clarity & Conversation Check**:
+   - **Prompt Clarity Check (Bộ Lọc Rõ Ràng Đầu Vào)**:
+     - Trước khi tra cứu code, AI đánh giá xem yêu cầu đã có mục tiêu, phạm vi và điều kiện đầu ra cụ thể chưa.
+     - Nếu mơ hồ: Dừng lại hỏi làm rõ ngay, TUYỆT ĐỐI KHÔNG quét mò codebase.
    - **Định vị dự án & Tự động Chuyển Workspace (In-Memory Lookup & Fallback Auto-Scan)**:
      - Trích xuất mã dự án `{ma_du_an}` từ task ID (ví dụ: `P1062`, `P1115`, `PE4`...).
      - Tra cứu trực tiếp từ bảng ánh xạ `~/.agent/rules/project-mapping.md`:
@@ -50,6 +56,7 @@ flowchart TD
    - Kiểm tra ngay lập tức sự tồn tại của `.agent` symlink và `docs/data-flows/INDEX.md` trong thư mục dự án vừa chuyển.
    - Nếu chưa có hoặc thiếu cấu hình $\rightarrow$ thực thi ngay:
      `ln -sf /mnt/projects/study-ai-antigravity-skills/.agent .agent && /mnt/projects/study-ai-antigravity-skills/scripts/index-refresh`.
+   - **Ưu tiên Indexer**: Mọi thao tác tìm kiếm sau đó BẮT BUỘC tra cứu qua index file trước, không nạp toàn bộ file lớn vào context.
 2. **Fetch Jira Task, Safe Transition & Session Renaming**:
    - Tra cứu task qua `jira_get_issue` lấy issue type (Bug / Story / Task), summary, description, comments, criteria.
    - **Xử lý trạng thái Jira:**
@@ -77,33 +84,32 @@ flowchart TD
 7. **Automated Testing & Artifact Cleanup**:
    - Chạy test tự động qua Docker container (`docker exec phpunit`) hoặc NPM.
    - **Bắt buộc tự động xóa bỏ toàn bộ file test tạm thời trước khi chuyển bước.**
-8. **Walkthrough & Git Diff Verification**:
+8. **Walkthrough & Git Diff Verification (Kèm Gợi ý /compact)**:
+   - **Chủ động nhắc /compact**: Trước khi xuất bản tài liệu dài `walkthrough.md`, AI gợi ý người dùng gõ `/compact` để giải phóng context window.
    - Ghi nhận kết quả thực thi vào `walkthrough.md`.
    - Tự rà soát `git diff` đảm bảo: Dòng code <= 120 ký tự, Copyright Header, Thẻ XML match 100%.
-9. **Subagent Code Review, SQL Security & Architecture Audit (Gatekeeper Step)**:
-   - Gọi Subagent độc lập (`Role: Code Reviewer & Architecture Auditor`) thực thi 3 nhiệm vụ:
-     1. Soi lại diff tìm rủi ro mã nguồn (Memory Leak, Race Condition, Null Pointer Safety, Type Safety).
-     2. **Kiểm toán Bảo mật & Hiệu năng SQL (SQL Security & Performance Audit)**: Chống SQL Injection (bắt buộc dùng
-        bind variables/quoteInto), chặn lỗi N+1 query trong loop, tránh DB deadlocks, và kiểm tra quyền truy xuất.
-     3. **Kiểm toán Kiến trúc (Architecture & System Audit)**: Phát hiện pattern mới cần đóng gói thành Skill/Rule,
-        hoặc phát hiện mâu thuẫn/nghẽn trong hệ thống rules để đề xuất cải tiến có điều kiện.
+9. **Code Review & Architecture Audit (Conditional Subagent Trigger)**:
+   - **Phân loại Task để kích hoạt Reviewer**:
+     - **Nhóm 1 - Rủi ro cao (BẮT BUỘC gọi Subagent `Code Reviewer & Architecture Auditor`)**:
+       * Can thiệp Thanh toán (Payment, Checkout, Payment Terminals).
+       * Can thiệp Tồn kho & Đơn hàng (Inventory, Stock deduction, Order placement/refund).
+       * Can thiệp Đồng bộ ngoại tuyến & CSDL (IndexedDB Sync, Realtime Reindex, Direct SQL queries).
+       * Override/Rewrite Core Framework API.
+     - **Nhóm 2 - Task thông thường / Rủi ro thấp (TỐI ƯU TOKEN: Main Agent Self-Check)**:
+       * Các task UI/UX, chỉnh sửa CSS, đổi layout text, thêm filter grid, fix validation form đơn giản.
+       * Main Agent tự đối soát diff trực tiếp theo Checklist chuẩn (độ dài dòng <= 120, escape XML, null-pointer) mà KHÔNG cần spawn Subagent riêng, tiết kiệm ~50.000 tokens.
    - **Điều kiện Chuyển Tiếp & Cơ chế Ngắt Vòng Lặp (Gatekeeper & Circuit Breaker Rule):**
-     - **Nếu Subagent kết luận CHƯA PASS** (phát hiện lỗi logic, rủi ro bảo mật, memory leak, hoặc vi phạm coding standards):
+     - **Nếu Review kết luận CHƯA PASS** (phát hiện lỗi logic, rủi ro bảo mật, memory leak, hoặc vi phạm coding standards):
        - **Lặp lại tối đa 3 lần (Max 3 Retries)**: Bắt buộc quay lại từ **Bước 4** (Đối soát Data Flow, cập nhật Plan, sửa code và test lại từ đầu).
        - **Kích hoạt Circuit Breaker (Khi đã lặp lại quá 3 lần vẫn KHÔNG PASS)**:
-         1. **DỪNG NGAY LẬP TỨC**: Tuyệt đối không tự ý lặp lại lần thứ 4 và không được commit/push code.
-         2. **Báo cáo Bế tắc (Escalation Report)**: Gửi báo cáo chi tiết cho lập trình viên gồm:
-            - *Tiêu chí / Lỗi cụ thể mà Subagent đánh giá chưa đạt.*
-            - *Tóm tắt các giải pháp/cách sửa đã thử trong 3 lần lặp vừa qua.*
-            - *2–3 Đề xuất hướng xử lý tiếp theo.*
-         3. **Chờ chỉ đạo của Lập trình viên**:
-            - Nếu lập trình viên hướng dẫn giải pháp $\rightarrow$ Thực hiện theo hướng dẫn và chạy lại review.
-            - Nếu lập trình viên xác nhận ngoại lệ (Force Pass) $\rightarrow$ Mới được chuyển sang Bước 10.
-     - **Nếu Subagent kết luận PASS 100%**: Mới được phép chuyển sang Bước 10.
-10. **Index Refresh, Git Commit, Push Code & Proactive Learning**:
+         1. **DỪNG NGAY LẬP TỨC**: Tuyệt đối không tự ý lặp lại lần thứ 4 và không được kết thúc task.
+         2. **Báo cáo Bế tắc (Escalation Report)**: Gửi báo cáo chi tiết cho lập trình viên gồm lỗi cụ thể, các cách sửa đã thử và 2-3 đề xuất.
+         3. **Chờ chỉ đạo của Lập trình viên**: Sửa theo chỉ đạo hoặc lập trình viên xác nhận ngoại lệ (Force Pass) mới được chuyển tiếp.
+     - **Nếu kết luận PASS 100%**: Chuyển sang Bước 10.
+10. **Index Refresh, Git Command Suggestion & Proactive Learning**:
     - Chỉ thực hiện khi đã vượt qua vòng kiểm duyệt (PASS 100%) tại Bước 9.
     - **Tự động cập nhật Bộ Index**: Bổ sung Plugin/Rewrite/Class mới vào `docs/data-flows/` hoặc chạy script làm mới index để tránh stale index cho các phiên sau.
-    - Commit và push code đúng chuẩn: `{Fix/Feat} [{mã dự án} - {issue id}]: {ticket ID/summary}`.
+    - **Chỉ xuất khối gợi ý lệnh Git (Git Suggestion Block)**: AI tạo sẵn khối lệnh Git hoàn chỉnh (bao gồm `git add`, `git commit` đúng format chuẩn dự án, và `git push origin <branch>`), KHÔNG tự chạy trong terminal. Người dùng chỉ cần copy/paste chạy ở terminal cá nhân.
     - Đề xuất chạy `/learn` nếu task có bài học/kinh nghiệm quý cần ghi nhớ.
 
 ## 3. Communication & Clarification Mandate
