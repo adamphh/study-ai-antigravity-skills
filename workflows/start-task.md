@@ -11,10 +11,11 @@ Workflow khoi tao phien lam viec cho task moi theo dung quy chuan:
 1. **Buoc 0: Dinh vi Du An, Chuyen Workspace & Kiem Tra Prompt**
    - **Kiem tra Prompt (Prompt Clarity Gate)**: Danh gia xem yeu cau cua nguoi dung da ro rang ve muc tieu va ket qua mong muon chua. Neu mo ho, dung lai hoi ngay lap tuc.
    - Trich xuat ma du an `{ma_du_an}` tu tham so task ID (vi du: `P1150-39` -> `P1150`).
-   - Tra cuu bang anh xa trong `/mnt/projects/study-ai-antigravity-skills/rules/project-mapping.md`:
-     - **Neu tim thay**: Su dung ngay duong dan thu muc du an (0 lenh shell).
-     - **Neu KHÔNG tim thay**: Tu dong chay lenh `python3 /mnt/projects/study-ai-antigravity-skills/scripts/sync_project_mapping.py` de quet lai cac thu muc goc (`/mnt/projects/`, `/var/www/`, `/home/bss/`), cap nhat lai `project-mapping.md` va lay duong dan moi nhat.
-   - Dat `Cwd` truc tiep vao thu muc du an do cho toan bo cac lenh tool call tiep theo.
+   - Lay duong dan thu muc du an bang lenh:
+     ```bash
+     python3 /mnt/projects/study-ai-antigravity-skills/scripts/sync_project_mapping.py query {ma_du_an}
+     ```
+   - Dat `Cwd` truc tiep vao thu muc du an tra ve cho toan bo cac lenh tool call tiep theo.
 
 2. **Buoc 1: Kiem Tra & Khoi Tao Moi Truong Du An (Hard Requirement: Auto-Init & Auto-Index)**
    - BẮT BUỘC kiem tra su ton tai cua symlink `.agent` va tep chi muc `docs/data-flows/INDEX.md` ngay lap tuc sau khi chuyen workspace.

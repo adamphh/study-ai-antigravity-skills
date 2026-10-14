@@ -49,11 +49,13 @@
   một lỗi cũ (mất thẻ XML, quên copyright header, sai format commit...), AI phải tự đánh giá xem kiến thức này
   có giá trị tái sử dụng hay không. Nếu có, ngay lập tức gửi lời xin lỗi (nếu là lặp lỗi) và CHỦ ĐỘNG đề xuất
   lập trình viên chạy lệnh `/learn` để ghi nhớ quy tắc vào hệ thống mà không cần đợi nhắc nhở.
-- **Bắt buộc Review Code cuối Workflow (Mandatory Code Review & Risk Analysis):** Sau khi hoàn thành việc
-  triển khai mã nguồn và chạy test cho bất kỳ task nào, AI BẮT BUỘC phải tự động gọi Subagent chuyên biệt
-  (`Role: Code Reviewer & Risk Analyst`) để rà soát toàn bộ các file thay đổi/tạo mới, đánh giá các rủi ro
-  tiềm ẩn (Memory Leak, Race Condition, Null Pointer Safety, Edge cases) và báo cáo cho lập trình viên trước
-  khi commit.
+- **Rà Soát Code & Phân Tích Rủi Ro Cuối Workflow (Linter, Review & Conditional Subagent):**
+  Sau khi hoàn thành việc triển khai mã nguồn và chạy test cho bất kỳ task nào:
+  1. AI BẮT BUỘC tự động chạy `adam-code-linter` kiểm tra 120 ký tự, XML match 100%, copyright header trong 0.2s.
+  2. Main Agent tự đối soát diff qua Ma trận logic của `adam-code-review` (SQL injection, constructor backward compatibility, null-pointer...).
+  3. **Phân loại Task để triệu hồi Subagent:**
+     - *Task thông thường (UI/UX, CSS, đổi label, filter grid, validation đơn giản)*: Main Agent tự đánh giá PASS Ma Trận, tuyệt đối KHÔNG gọi Subagent để tiết kiệm ~50.000 tokens.
+     - *Task Rủi Ro Cao (Payment, Stock/Inventory, Đồng bộ IndexedDB, Realtime Reindex, Core API)*: BẮT BUỘC gọi Subagent chuyên biệt (`Role: Code Reviewer & Architecture Auditor`) để kiểm toán độc lập trước khi kết thúc task.
 
 ---
 
@@ -293,11 +295,11 @@
      - `{ticket ID hoặc user story name}`: Ticket ID hoặc user story name
        (e.g. `[US09] Customize Tyro payment popup layout and cancellation flow`).
      - Example: `Feat [P1115 - 391]: [US09] Customize Tyro payment popup layout and cancellation flow`.
-5. **Review Changes Before Committing**:
-   - Always run `git status` and `git diff` to review code modifications.
-   - Do not stage or commit temporary build outputs, configs, or dependencies.
-6. **Commit Scope**:
-   - Only commit files within the defined implementation plan.
+5. **Quy định Kết Thúc Task & Gợi Ý Lệnh Git (Git Suggestion Block):**
+   - **Tối ưu Token**: AI TUYỆT ĐỐI KHÔNG tự động chạy chuỗi lệnh terminal `git add`, `git commit`, `git push` ở cuối task (gây tốn hàng chục nghìn tokens).
+   - Thay vào đó, AI hiển thị **Khối Gợi Ý Lệnh Git (Git Suggestion Block)** hoàn chỉnh bao gồm format commit chuẩn: `{Fix/Feat} [{mã dự án} - {issue id}]: {ticket ID hoặc user story name}`.
+   - Trước khi tạo `walkthrough.md`, AI chủ động nhắc người dùng gõ lệnh `/compact` để giải phóng bộ nhớ context.
+   - Lập trình viên chỉ cần sao chép khối lệnh Git và chạy trực tiếp trên terminal của mình.
 
 ---
 

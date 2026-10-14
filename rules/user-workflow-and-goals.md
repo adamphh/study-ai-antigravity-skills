@@ -41,11 +41,9 @@ flowchart TD
    - **Prompt Clarity Check (Bộ Lọc Rõ Ràng Đầu Vào)**:
      - Trước khi tra cứu code, AI đánh giá xem yêu cầu đã có mục tiêu, phạm vi và điều kiện đầu ra cụ thể chưa.
      - Nếu mơ hồ: Dừng lại hỏi làm rõ ngay, TUYỆT ĐỐI KHÔNG quét mò codebase.
-   - **Định vị dự án & Tự động Chuyển Workspace (In-Memory Lookup & Fallback Auto-Scan)**:
+   - **Định vị dự án & Tự động Chuyển Workspace (Fast CLI Query)**:
      - Trích xuất mã dự án `{ma_du_an}` từ task ID (ví dụ: `P1062`, `P1115`, `PE4`...).
-     - Tra cứu trực tiếp từ bảng ánh xạ `~/.agent/rules/project-mapping.md`:
-       - **Nếu tìm thấy**: Sử dụng ngay đường dẫn thư mục dự án (0 lệnh shell).
-       - **Nếu KHÔNG tìm thấy**: Tự động chạy `python3 ~/.agent/scripts/sync_project_mapping.py` để quét lại các thư mục gốc (`/mnt/projects/`, `/var/www/`, `/home/bss/`), cập nhật lại `project-mapping.md` và lấy đường dẫn mới nhất.
+     - Lấy đường dẫn dự án bằng lệnh: `python3 /mnt/projects/study-ai-antigravity-skills/scripts/sync_project_mapping.py query {ma_du_an}`.
      - **BẮT BUỘC TỰ ĐỘNG CHUYỂN WORKSPACE & GÁN `Cwd`** sang thư mục dự án tương ứng ngay lập tức TRƯỚC KHI thực thi bất kỳ thao tác nào khác, nhằm tránh tác động đến các thư mục ngoài phạm vi.
    - **Tra cứu Conversation cũ (Auto-Resume Check)**: Kiểm tra danh sách Conversation History xem đã có phiên hội thoại
      nào trước đó liên quan đến mã task `{ma_du_an}-{ma_issue}` hay chưa.
