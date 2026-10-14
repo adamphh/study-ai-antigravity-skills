@@ -20,20 +20,20 @@ MUST strictly follow this sequence:
 flowchart TD
     A["0. Khởi tạo phiên, Prompt Clarity Check & Chuyển Workspace"] --> B["1. Kiểm tra Môi Trường & Mục lục Code (Auto-Init & Auto-Index)"]
     B --> C["2. Đọc Task Jira, Safe Transition & Đổi Tên Session"]
-    C --> D["3. Chuẩn bị Git Branch (Checkout release & Tạo branch task)"]
-    D --> E["4. Tra cứu Data Flow & Check trùng Plugin/Rewrite (qua Index)"]
-    E --> F["5. Lập Kế Hoạch (Plan) & Phỏng vấn làm rõ (/grill-me)"]
+    C --> D["3. Chuẩn bị Git Branch (Auto-Skill: adam-git-branch)"]
+    D --> E["4. Tra cứu Data Flow & Soi Xung Đột (Auto-Skill: adam-conflict-auditor)"]
+    E --> F["5. Khởi tạo Kế Hoạch (Auto-Skill: adam-plan-scaffold & /grill-me)"]
     F --> G["6. Viết Code theo đúng Scope (Custom/FixBug & npm upgrade)"]
     G --> H["7. Chạy Test Tự Động (Docker/NPM) & Dọn file rác"]
-    H --> I["8. Nhắc /compact, Viết Walkthrough & Soi lại Git Diff"]
-    I --> J{"9. Rà Soát Code: Rủi Ro Cao hay Thấp?"}
-    J -- "Rủi ro thấp / UI/UX" --> J1["Main Agent Tự Rà Soát (Tiết kiệm ~50k Token)"]
+    H --> I["8. Quét Chuẩn Code & Nhắc /compact (Auto-Skill: adam-code-linter)"]
+    I --> J{"9. Rà Soát Logic Code (Auto-Skill: adam-code-review)"}
+    J -- "Task Thường / UI" --> J1["Main Agent Tự Rà Soát Ma Trận (Tiết kiệm ~50k Token)"]
     J -- "Rủi ro cao (Payment/Stock/Sync)" --> J2["Gọi Subagent Code Reviewer (Gatekeeper)"]
     J2 -- "Chưa PASS (Tối đa 3 lần)" --> E
     J2 -- "Quá 3 lần" --> ESC["DỪNG LẠI & Báo cáo Lập trình viên"]
     ESC -- "Chỉ đạo giải pháp / Sửa tay" --> E
     ESC -- "Chấp nhận ngoại lệ (Force Pass)" --> K["10. Cập nhật Index, Gợi Ý Lệnh Git & Gợi ý /learn"]
-    J1 -- "PASS Checklist" --> K
+    J1 -- "PASS Ma Trận" --> K
     J2 -- "PASS 100%" --> K
 ```
 
@@ -65,18 +65,20 @@ flowchart TD
    - **Đổi tên Conversation (Session Renaming)**:
      - BẮT BUỘC đặt/đổi tên Conversation thành `{ma_du_an}-{ma_issue}-{noi_dung_task_tom_tat_20_ki_tu}`
        để đồng bộ 100% với tên file Plan và dễ dàng tìm kiếm/tiếp tục sau này.
-3. **Git Branch Preparation & Baseline Sync**:
-   - Kiểm tra branch hiện tại (`git status`, `git branch --show-current`).
-   - Đảm bảo branch phát triển bắt đầu từ nhánh `release` sạch: `git checkout release && git pull origin release`.
-   - Tạo branch mới chuẩn xác theo loại task từ Jira:
-     - Nếu là Bug: `git checkout -b fix/{ma_du_an}-{ma_issue}-{noi_dung_task_tom_tat}`.
-     - Nếu là Feature / Story / Task: `git checkout -b feature/{ma_du_an}-{ma_issue}-{noi_dung_task_tom_tat}`.
-4. **Knowledge Retrieval & Conflict Audit via Index**:
+3. **Git Branch Preparation (BẮT BUỘC Dùng Skill: `adam-git-branch`)**:
+   - AI BẮT BUỘC thực thi script của skill `adam-git-branch` trong 1 lệnh shell duy nhất:
+     `python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-git-branch/scripts/prepare_branch.py {ma_du_an}-{ma_issue} "{noi_dung_task_tom_tat}" [--bug|--feature]`
+   - Script tự động kiểm tra working tree sạch sẽ, fetch `origin/release` và tạo branch chuẩn `fix/...` hoặc `feature/...`.
+4. **Knowledge Retrieval & Conflict Audit (BẮT BUỘC Dùng Skill: `adam-conflict-auditor`)**:
    - Đọc đúng Data Flow liên quan đến domain của task (Payment, Cart, Reward...).
-   - Mở `docs/data-flows/client/extension-plugins.md` / `extension-rewrites.md` đối soát xem method/class mục tiêu đã có extension nào can thiệp trước đó chưa (tránh xung đột logic mà không cần grep).
-5. **Plan Creation, Clarification & Approval**:
+   - Trước khi đề xuất phương án can thiệp vào Class hoặc Component nào, AI BẮT BUỘC chạy script:
+     `python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-conflict-auditor/scripts/audit_conflict.py --target-class "<CLASS_OR_COMPONENT_NAME>"`
+     để phát hiện xung đột plugin/rewrite/mixin trong 0.1s mà không cần grep thủ công.
+5. **Plan Creation, Clarification & Approval (BẮT BUỘC Dùng Skill: `adam-plan-scaffold`)**:
+   - AI BẮT BUỘC sinh khung sườn kế hoạch tự động bằng lệnh:
+     `python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-plan-scaffold/scripts/scaffold_plan.py {ma_du_an} {ma_issue} "{noi_dung_tom_tat_20_ki_tu}" [--bug|--feature]`
    - Phỏng vấn làm rõ nếu yêu cầu mơ hồ (đặt 2–4 câu hỏi trắc nghiệm qua `/grill-me`).
-   - Tạo tệp `Plans/{ma_du_an}-{ma_issue}-{noi_dung_task_tom_tat_20_ki_tu}.md` và artifact `implementation_plan.md`.
+   - Cập nhật chi tiết nội dung nghiệp vụ vào tệp `Plans/...` vừa tạo và tạo artifact `implementation_plan.md`.
    - **Chờ User duyệt (Approve) mới được bắt đầu viết code.**
 6. **Code Implementation (Strict Scope)**:
    - Triển khai code trong vùng cho phép (`*Custom*`, `*FixBug*` / `src/extension/`).
@@ -84,12 +86,13 @@ flowchart TD
 7. **Automated Testing & Artifact Cleanup**:
    - Chạy test tự động qua Docker container (`docker exec phpunit`) hoặc NPM.
    - **Bắt buộc tự động xóa bỏ toàn bộ file test tạm thời trước khi chuyển bước.**
-8. **Walkthrough & Git Diff Verification (Tự Động Chạy adam-code-linter & Nhắc /compact)**:
+8. **Code Standards Linter & Walkthrough (BẮT BUỘC Dùng Skill: `adam-code-linter`)**:
    - **Tự động chạy `adam-code-linter`**: AI BẮT BUỘC thực thi script `python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py` để kiểm tra độ dài dòng <= 120 ký tự, XML match 100%, EOF newline và Copyright header trong 0.2s. Nếu linter báo lỗi, phải sửa ngay lập tức.
    - **Chủ động nhắc /compact**: Trước khi xuất bản tài liệu dài `walkthrough.md`, AI gợi ý người dùng gõ `/compact` để giải phóng context window.
    - Ghi nhận kết quả thực thi vào `walkthrough.md`.
-9. **Code Review & Architecture Audit (Conditional Subagent Trigger)**:
-   - **Phân loại Task để kích hoạt Reviewer**:
+9. **Logic Code Review & Architecture Audit (BẮT BUỘC Dùng Skill: `adam-code-review`)**:
+   - **Kích hoạt Ma Trận Review (adam-code-review)**: AI đối soát diff qua checklist 6 tiêu chuẩn (SQL injection, N+1 query, constructor backward compatibility, null-pointer, extension attributes, in-function require).
+   - **Phân loại Task để quyết định triệu hồi Subagent**:
      - **Nhóm 1 - Rủi ro cao (BẮT BUỘC gọi Subagent `Code Reviewer & Architecture Auditor`)**:
        * Can thiệp Thanh toán (Payment, Checkout, Payment Terminals).
        * Can thiệp Tồn kho & Đơn hàng (Inventory, Stock deduction, Order placement/refund).
@@ -97,14 +100,9 @@ flowchart TD
        * Override/Rewrite Core Framework API.
      - **Nhóm 2 - Task thông thường / Rủi ro thấp (TỐI ƯU TOKEN: Main Agent Self-Check)**:
        * Các task UI/UX, chỉnh sửa CSS, đổi layout text, thêm filter grid, fix validation form đơn giản.
-       * Main Agent tự đối soát diff trực tiếp theo Checklist chuẩn (độ dài dòng <= 120, escape XML, null-pointer) mà KHÔNG cần spawn Subagent riêng, tiết kiệm ~50.000 tokens.
+       * Main Agent tự đánh giá PASS Ma Trận của `adam-code-review` mà KHÔNG cần spawn Subagent riêng, tiết kiệm ~50.000 tokens.
    - **Điều kiện Chuyển Tiếp & Cơ chế Ngắt Vòng Lặp (Gatekeeper & Circuit Breaker Rule):**
-     - **Nếu Review kết luận CHƯA PASS** (phát hiện lỗi logic, rủi ro bảo mật, memory leak, hoặc vi phạm coding standards):
-       - **Lặp lại tối đa 3 lần (Max 3 Retries)**: Bắt buộc quay lại từ **Bước 4** (Đối soát Data Flow, cập nhật Plan, sửa code và test lại từ đầu).
-       - **Kích hoạt Circuit Breaker (Khi đã lặp lại quá 3 lần vẫn KHÔNG PASS)**:
-         1. **DỪNG NGAY LẬP TỨC**: Tuyệt đối không tự ý lặp lại lần thứ 4 và không được kết thúc task.
-         2. **Báo cáo Bế tắc (Escalation Report)**: Gửi báo cáo chi tiết cho lập trình viên gồm lỗi cụ thể, các cách sửa đã thử và 2-3 đề xuất.
-         3. **Chờ chỉ đạo của Lập trình viên**: Sửa theo chỉ đạo hoặc lập trình viên xác nhận ngoại lệ (Force Pass) mới được chuyển tiếp.
+     - **Nếu Review kết luận CHƯA PASS**: Lặp lại tối đa 3 lần. Nếu quá 3 lần vẫn fail -> Kích hoạt Circuit Breaker, dừng lại báo cáo bế tắc và chờ chỉ đạo của lập trình viên.
      - **Nếu kết luận PASS 100%**: Chuyển sang Bước 10.
 10. **Index Refresh, Git Command Suggestion & Proactive Learning**:
     - Chỉ thực hiện khi đã vượt qua vòng kiểm duyệt (PASS 100%) tại Bước 9.

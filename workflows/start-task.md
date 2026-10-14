@@ -24,11 +24,10 @@ Workflow khoi tao phien lam viec cho task moi theo dung quy chuan:
      ```
    - **Uu tien Indexer**: Tra cuu vi tri class/method qua index truoc, khong nap file lon vao context.
 
-3. **Buoc 2: Chuan bi Git Branch**
-   - Kiem tra git status trong thu muc du an.
-   - Dam bao branch bat dau tu `origin/release`:
+3. **Buoc 2: Chuan bi Git Branch (Auto-Skill: `adam-git-branch`)**
+   - AI BẮT BUỘC goi script cua skill `adam-git-branch` trong 1 lenh shell duy nhat:
      ```bash
-     git fetch origin release && git checkout -b {ma_du_an}-{ma_issue}-{noi_dung_tom_tat} origin/release
+     python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-git-branch/scripts/prepare_branch.py {ma_du_an}-{ma_issue} "{noi_dung_tom_tat}" [--bug|--feature]
      ```
 
 4. **Buoc 3: Doc Thong tin Task tu Jira & Chuyen Trang Thai**
@@ -36,14 +35,24 @@ Workflow khoi tao phien lam viec cho task moi theo dung quy chuan:
    - Neu trang thai la `To Do` (hoac `Open`, `Backlog`): Tu dong chuyen sang `In Progress` qua `jira_transition_issue`.
    - Neu trang thai khac: Khong thay doi trang thai Jira.
 
-5. **Buoc 4: Lap Ke Hoach (Plan) & Tra Cuu Data Flow Index**
-   - Doc chi muc `docs/data-flows/INDEX.md` de nam ro cac module, plugin va duong dan lien quan truoc khi lap ke hoach.
-   - Tao file ke hoach `Plans/{ma_du_an}-{ma_issue}-{noi_dung_tom_tat}.md` va artifact `implementation_plan.md`.
-   - Neu co diem chua ro rang, chu dong dat 2-4 cau hoi qua `/grill-me`.
-   - Cho lap trinh vien phe duyet ke hoach truoc khi tien hanh code.
+5. **Buoc 4: Soi Xung Dot (Auto-Skill: `adam-conflict-auditor`) & Lap Ke Hoach (Auto-Skill: `adam-plan-scaffold`)**
+   - **Kiem tra Xung dot Plugin/Rewrite**: Truoc khi code, chay:
+     ```bash
+     python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-conflict-auditor/scripts/audit_conflict.py --target-class "<CLASS_OR_COMPONENT_NAME>"
+     ```
+   - **Khoi tao Ke hoach chuan hoa**:
+     ```bash
+     python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-plan-scaffold/scripts/scaffold_plan.py {ma_du_an} {ma_issue} "{noi_dung_tom_tat_20_ki_tu}" [--bug|--feature]
+     ```
+   - Cap nhat noi dung nghiep vu vao file Plan vua sinh, tao artifact `implementation_plan.md` va cho nguoi dung phe duyet truoc khi code.
 
-6. **Buoc 5: Quy Chuan Ket Thuc Task & Toi Uu Token**
-   - **Chay Linter Tu Dong**: Bắt buộc chạy `python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py` kiem tra 120 ky tu, XML match, EOF newline trong 0.2s truoc khi review.
+6. **Buoc 5: Quy Chuan Ket Thuc Task, Linter, Review & Toi Uu Token**
+   - **Chay Linter Tu Dong (Auto-Skill: `adam-code-linter`)**: Bắt buộc chạy:
+     ```bash
+     python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py
+     ```
+     kiem tra 120 ky tu, XML match, EOF newline trong 0.2s. Neu fail phai sua ngay.
+   - **Ra Soat Logic (Auto-Skill: `adam-code-review`)**: Main Agent tu doi soat theo Ma tran 6 tieu chi (SQL injection, N+1 query, constructor backward compatibility, null-pointer, extension attributes, in-function require).
+   - **Quyet dinh Subagent**: Chi goi Subagent Review voi cac task rui ro cao (Payment, Stock, Sync, Core API).
    - Truoc khi tao `walkthrough.md`, nhac nguoi dung chay `/compact`.
    - Chi xuat **Khoi goi y lenh Git (Git Suggestion Block)** cho nguoi dung tu chay o terminal ngoai.
-   - Chi goi Subagent Review voi cac task rui ro cao (Payment, Stock, Sync, Core API).
