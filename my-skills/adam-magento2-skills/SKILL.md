@@ -99,6 +99,7 @@ description: Tập hợp các skills và hướng dẫn chuẩn cho việc phát
 | [preference-virtualtype.md](./references/preference-virtualtype.md) | Sử dụng Preference vs Virtual Type |
 | [code-review.md](./references/code-review.md) | Hướng dẫn review code |
 | [debugging.md](./references/debugging.md) | Hướng dẫn debug lỗi Magento |
+| [opensearch-elasticsearch-troubleshooting.md](./opensearch-elasticsearch-troubleshooting.md) | Hướng dẫn debug và xử lý lỗi OpenSearch & Elasticsearch |
 | [useful-commands.md](./useful-commands.md) | Các lệnh CLI thường dùng |
 
 ---

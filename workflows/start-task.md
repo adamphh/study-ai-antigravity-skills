@@ -8,7 +8,8 @@ Workflow khoi tao phien lam viec cho task moi theo dung quy chuan:
 
 ## Huong dan thuc thi cho Agent:
 
-1. **Buoc 0: Dinh vi Du An & Chuyen Workspace (In-Memory Lookup & Fallback Auto-Scan)**
+1. **Buoc 0: Dinh vi Du An, Chuyen Workspace & Kiem Tra Prompt**
+   - **Kiem tra Prompt (Prompt Clarity Gate)**: Danh gia xem yeu cau cua nguoi dung da ro rang ve muc tieu va ket qua mong muon chua. Neu mo ho, dung lai hoi ngay lap tuc.
    - Trich xuat ma du an `{ma_du_an}` tu tham so task ID (vi du: `P1150-39` -> `P1150`).
    - Tra cuu bang anh xa trong `/mnt/projects/study-ai-antigravity-skills/rules/project-mapping.md`:
      - **Neu tim thay**: Su dung ngay duong dan thu muc du an (0 lenh shell).
@@ -21,6 +22,7 @@ Workflow khoi tao phien lam viec cho task moi theo dung quy chuan:
      ```bash
      ln -sf /mnt/projects/study-ai-antigravity-skills/.agent .agent && /mnt/projects/study-ai-antigravity-skills/scripts/index-refresh
      ```
+   - **Uu tien Indexer**: Tra cuu vi tri class/method qua index truoc, khong nap file lon vao context.
 
 3. **Buoc 2: Chuan bi Git Branch**
    - Kiem tra git status trong thu muc du an.
@@ -37,4 +39,10 @@ Workflow khoi tao phien lam viec cho task moi theo dung quy chuan:
 5. **Buoc 4: Lap Ke Hoach (Plan) & Tra Cuu Data Flow Index**
    - Doc chi muc `docs/data-flows/INDEX.md` de nam ro cac module, plugin va duong dan lien quan truoc khi lap ke hoach.
    - Tao file ke hoach `Plans/{ma_du_an}-{ma_issue}-{noi_dung_tom_tat}.md` va artifact `implementation_plan.md`.
-   - Bao cao ngan gon cho nguoi dung va cho duyet ke hoach truoc khi tien hanh code.
+   - Neu co diem chua ro rang, chu dong dat 2-4 cau hoi qua `/grill-me`.
+   - Cho lap trinh vien phe duyet ke hoach truoc khi tien hanh code.
+
+6. **Buoc 5: Quy Chuan Ket Thuc Task & Toi Uu Token**
+   - Truoc khi tao `walkthrough.md`, nhac nguoi dung chay `/compact`.
+   - Chi xuat **Khoi goi y lenh Git (Git Suggestion Block)** cho nguoi dung tu chay o terminal ngoai.
+   - Chi goi Subagent Review voi cac task rui ro cao (Payment, Stock, Sync, Core API).
