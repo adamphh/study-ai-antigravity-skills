@@ -27,7 +27,7 @@
 | [`server/vendor/magestore/barcode.md`](server/vendor/magestore/barcode.md) | BarcodeSuccess | ✅ Sẵn sàng |
 | [`server/vendor/magestore/click-and-collect.md`](server/vendor/magestore/click-and-collect.md) | ClickAndCollect (Admin/Frontend/API/GraphQL) | ✅ Sẵn sàng |
 | [`server/vendor/magestore/foundation-support.md`](server/vendor/magestore/foundation-support.md) | Core, Logger, LoggerApi, LoggerGraphQl | ✅ Sẵn sàng |
-| [`server/vendor/magestore/overview.md`](server/vendor/magestore/overview.md) | **Tất cả modules còn lại** (Webpos, OrderSuccess, BranchRequest, Inventory...) | ⚠️ Chưa tách (1.2MB) |
+| [`server/vendor/magestore/overview.md`](server/vendor/magestore/overview.md) | **Tất cả modules còn lại** (Webpos, OrderSuccess, BranchRequest, Inventory...) | ⚠️ **CẢNH BÁO 1.2MB**: TUYỆT ĐỐI KHÔNG dùng `view_file` nạp cả file. Chỉ dùng `grep` lấy đúng dòng |
 | `server/vendor/magestore/pos-core.md` | Webpos, WebposIntegration, WebposMobile, WebposShipping... | 🔲 TODO (tách từ overview) |
 | `server/vendor/magestore/sales-order.md` | OrderSuccess, ProductExchange | 🔲 TODO (tách từ overview) |
 | `server/vendor/magento/checkout.md` | Magento 2 Core Checkout & Sales APIs/Plugins | 🔲 TODO |
