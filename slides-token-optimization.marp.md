@@ -285,7 +285,8 @@ Prompt: "Sửa giúp tôi lỗi nút thanh toán"
   4. Kiểm tra ký tự kết thúc tệp (EOF) chỉ có đúng 1 dòng trống.
 
 ```bash
-python3 my-skills/adam-code-linter/scripts/lint_diff.py
+# Hỗ trợ --staged hoặc truyền file cụ thể -> Output chỉ vài dòng, không quét nhầm file cũ!
+python3 my-skills/adam-code-linter/scripts/lint_diff.py --staged
 # Output trong 0.2s: ✅ ALL FILES PASSED CODING STANDARDS LINTER!
 ```
 👉 <span class="highlight">Tốc độ: 0.2 giây | Chi phí token: 0 | Tiết kiệm: ~50.000 tokens/task!</span>

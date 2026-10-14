@@ -10,6 +10,7 @@ Chào mừng bạn đến với **Knowledge Base** - Hệ thống lưu trữ bà
 | Mã ID | Tiêu đề Bài học (Title) | Domain | Phạm vi nghiệp vụ tóm tắt | Ngày cập nhật |
 | :--- | :--- | :--- | :--- | :--- |
 | [KB-CHK-001](file:///mnt/projects/study-ai-antigravity-skills/docs/knowledge-base/checkout-payment/creditmemo-order-state-machine-cache.md) | **Xử lý Hoàn tiền Đơn hàng (Creditmemo), Trạng thái Order State Machine và Tránh Stale RAM Cache trong Magento 2** | `checkout-payment` | Xử lý Order State (Closed/Complete), tính QtyToShip khi hoàn tiền và tránh Stale Entity Cache trong Magento 2 OrderRepository | 2026-10-08 |
+| [KB-OPT-001](file:///mnt/projects/study-ai-antigravity-skills/docs/knowledge-base/agent-optimization/token-and-cost-optimization-architecture.md) | **Nghệ Thuật Tối Ưu Hóa Chi Phí Token & Hiệu Năng Cho AI Agent (Antigravity Architecture)** | `agent-optimization` | Cắt giảm 50-70% token bằng Prompt Clarity Gate, di dời bảng mapping sang JSON, dùng Skill linter 0.2s thay Subagent và Git Suggestion Block | 2026-10-14 |
 <!-- KB_INDEX_END -->
 
 ---

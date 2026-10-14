@@ -85,7 +85,10 @@ flowchart TD
    - Chạy test tự động qua Docker container (`docker exec phpunit`) hoặc NPM.
    - **Bắt buộc tự động xóa bỏ toàn bộ file test tạm thời trước khi chuyển bước.**
 8. **Code Standards Linter & Walkthrough (BẮT BUỘC Dùng Skill: `adam-code-linter`)**:
-   - **Tự động chạy `adam-code-linter`**: AI BẮT BUỘC thực thi script `python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py` để kiểm tra độ dài dòng <= 120 ký tự, XML match 100%, EOF newline và Copyright header trong 0.2s. Nếu linter báo lỗi, phải sửa ngay lập tức.
+   - **Tự động chạy `adam-code-linter`**: AI BẮT BUỘC thực thi script:
+     `python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py --staged`
+     (hoặc truyền đường dẫn file vừa sửa) kiểm tra độ dài dòng <= 120 ký tự, XML match 100%, EOF newline và Copyright.
+     Nếu linter báo lỗi, phải sửa ngay lập tức.
    - **Chủ động nhắc /compact**: Trước khi xuất bản tài liệu dài `walkthrough.md`, AI gợi ý người dùng gõ `/compact` để giải phóng context window.
    - Ghi nhận kết quả thực thi vào `walkthrough.md`.
 9. **Logic Code Review & Architecture Audit (BẮT BUỘC Dùng Skill: `adam-code-review`)**:

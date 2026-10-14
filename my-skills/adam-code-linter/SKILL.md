@@ -35,11 +35,13 @@ Kỹ năng này cung cấp cơ chế kiểm tra định dạng và chuẩn mã n
 AI chạy lệnh terminal sau trên workspace của dự án hiện tại:
 
 ```bash
+# Mặc định: Lint tất cả file đã thay đổi (staged & unstaged trong commit hiện tại, loại trừ untracked cũ)
 python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py
-```
 
-*Lưu ý: Có thể truyền danh sách file cụ thể nếu chỉ muốn kiểm tra một vài file:*
-```bash
+# Chỉ lint các file đã add vào staging area (Khuyên dùng trước khi commit):
+python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py --staged
+
+# Chỉ định danh sách file cụ thể (nhanh nhất và sạch nhất):
 python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py path/to/file1.php path/to/file2.xml
 ```
 

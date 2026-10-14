@@ -12,26 +12,48 @@ Checks:
 import sys
 import os
 import subprocess
+import argparse
 import xml.etree.ElementTree as ET
 
 MAX_LINE_LENGTH = 120
 
-def get_git_diff_files():
+def get_git_diff_files(staged_only=False, include_untracked=False):
+    """
+    Get changed files to lint.
+    Default: Files changed against HEAD (both unstaged and staged).
+    If staged_only=True: Only files in git staging area (git diff --cached).
+    Untracked files are excluded by default to avoid scanning pre-existing dirty files in workspace.
+    """
     try:
-        # Get files changed in working tree or staged against HEAD/release
+        if staged_only:
+            res = subprocess.run(
+                ["git", "diff", "--name-only", "--cached"],
+                capture_output=True, text=True, check=True
+            )
+            return sorted(list(set([f.strip() for f in res.stdout.splitlines() if f.strip()])))
+
         res = subprocess.run(
             ["git", "diff", "--name-only", "HEAD"],
             capture_output=True, text=True, check=True
         )
         files = [f.strip() for f in res.stdout.splitlines() if f.strip()]
-        # Also check untracked files
-        res_untracked = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard"],
+
+        res_cached = subprocess.run(
+            ["git", "diff", "--name-only", "--cached"],
             capture_output=True, text=True, check=True
         )
-        untracked = [f.strip() for f in res_untracked.stdout.splitlines() if f.strip()]
-        all_files = sorted(list(set(files + untracked)))
-        return all_files
+        cached_files = [f.strip() for f in res_cached.stdout.splitlines() if f.strip()]
+        all_files = set(files + cached_files)
+
+        if include_untracked:
+            res_untracked = subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard"],
+                capture_output=True, text=True, check=True
+            )
+            untracked = [f.strip() for f in res_untracked.stdout.splitlines() if f.strip()]
+            all_files.update(untracked)
+
+        return sorted(list(all_files))
     except Exception as e:
         print(f"Error running git diff: {e}")
         return []
@@ -41,9 +63,15 @@ def check_file(file_path):
     if not os.path.isfile(file_path):
         return issues
 
+    # Normalize path separators
+    normalized_path = file_path.replace("\\", "/")
+
     # Skip non-source files or vendor/build dirs
-    ignored_prefixes = ("vendor/", "node_modules/", "pub/static/", "var/", "generated/", ".git/")
-    if any(file_path.startswith(prefix) for prefix in ignored_prefixes):
+    ignored_patterns = (
+        "vendor/", "node_modules/", "pub/static/", "var/",
+        "generated/", ".git/", ".agent/", "setup/"
+    )
+    if any(pattern in normalized_path for pattern in ignored_patterns):
         return issues
 
     # Check line length and content
@@ -94,7 +122,35 @@ def check_file(file_path):
     return issues
 
 def main():
-    target_files = sys.argv[1:] if len(sys.argv) > 1 else get_git_diff_files()
+    parser = argparse.ArgumentParser(
+        description="adam-code-linter: Fast deterministic diff checker for Antigravity Workspace."
+    )
+    parser.add_argument(
+        "files",
+        nargs="*",
+        help="Optional specific file paths to lint. If omitted, lints git diff files."
+    )
+    parser.add_argument(
+        "--staged",
+        action="store_true",
+        help="Only check files staged in git index (git diff --cached)."
+    )
+    parser.add_argument(
+        "--include-untracked",
+        action="store_true",
+        help="Include untracked files in git diff (disabled by default)."
+    )
+
+    args = parser.parse_args()
+
+    if args.files:
+        target_files = args.files
+    else:
+        target_files = get_git_diff_files(
+            staged_only=args.staged,
+            include_untracked=args.include_untracked
+        )
+
     if not target_files:
         print("✅ No modified files detected to lint.")
         sys.exit(0)
@@ -123,3 +179,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

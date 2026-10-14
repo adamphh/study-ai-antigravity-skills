@@ -48,9 +48,11 @@ Workflow khoi tao phien lam viec cho task moi theo dung quy chuan:
    - Cap nhat noi dung nghiep vu vao file Plan vua sinh, tao artifact `implementation_plan.md` va cho nguoi dung phe duyet truoc khi code.
 
 6. **Buoc 5: Quy Chuan Ket Thuc Task, Linter, Review & Toi Uu Token**
-   - **Chay Linter Tu Dong (Auto-Skill: `adam-code-linter`)**: Bắt buộc chạy:
+   - **Chay Linter Tu Dong (Auto-Skill: `adam-code-linter`)**: Bắt buộc chạy script kiểm tra (hỗ trợ cờ `--staged` hoặc truyền danh sách file cụ thể để đầu ra luôn gọn gàng, tránh quét file untracked cũ):
      ```bash
-     python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py
+     python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py --staged
+     # Hoặc chỉ định rõ file vừa sửa:
+     # python3 /mnt/projects/study-ai-antigravity-skills/my-skills/adam-code-linter/scripts/lint_diff.py path/to/file.php
      ```
      kiem tra 120 ky tu, XML match, EOF newline trong 0.2s. Neu fail phai sua ngay.
    - **Ra Soat Logic (Auto-Skill: `adam-code-review`)**: Main Agent tu doi soat theo Ma tran 6 tieu chi (SQL injection, N+1 query, constructor backward compatibility, null-pointer, extension attributes, in-function require).
