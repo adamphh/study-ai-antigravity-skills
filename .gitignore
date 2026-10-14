@@ -1,0 +1,8 @@
+mcp_config.json
+__pycache__/
+*.pyc
+.idea/
+.agent/state.json
+test/
+plan/
+Plans/

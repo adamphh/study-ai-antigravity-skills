@@ -1,0 +1,128 @@
+services:
+  php:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: {{CONTAINER_PREFIX}}-php
+    restart: always
+    networks:
+      {{NETWORK_NAME}}:
+        aliases:
+          - "php"
+    env_file:
+      - .magenv
+    volumes:
+      - ./src:/var/www:rw
+      - ./php/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+      - ./php/php.ini-development:/usr/local/etc/php/php.ini
+
+  node:
+    image: node:16-alpine
+    container_name: {{CONTAINER_PREFIX}}-node
+    restart: always
+    command: sleep 86400
+    networks:
+      - {{NETWORK_NAME}}
+    volumes:
+      - ./src:/var/www:rw
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: {{CONTAINER_PREFIX}}-nginx
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/.htpasswd:/etc/nginx/.htpasswd:ro
+      - ./src:/var/www:ro
+    networks:
+      - {{NETWORK_NAME}}
+    ports:
+      - 127.0.0.1:{{PORT_NGINX}}:80
+    command: >
+      /bin/ash -c "adduser -DH -s /usr/sbin/nologin -G www-data www-data;
+      nginx -g 'daemon off;'
+      "
+    depends_on:
+      - php
+
+  elasticsearch:
+    image: elasticsearch:7.10.1
+    container_name: {{CONTAINER_PREFIX}}-elasticsearch
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1.5G
+        reservations:
+          cpus: '0.2'
+          memory: 1G
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    networks:
+      {{NETWORK_NAME}}:
+        aliases:
+          - "elasticsearch"
+    ports:
+      - "{{PORT_ES}}:9200"
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:9200/_cat/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: mysql:8
+    container_name: {{CONTAINER_PREFIX}}-db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=empty
+      - MYSQL_DATABASE=magento
+      - MYSQL_USER=magento
+      - MYSQL_PASSWORD=magento
+    volumes:
+      - ./db-data:/var/lib/mysql:rw
+    networks:
+      {{NETWORK_NAME}}:
+        aliases:
+          - "db"
+
+  phpmyadmin:
+    image: phpmyadmin:5-apache
+    container_name: {{CONTAINER_PREFIX}}-pma
+    restart: always
+    environment:
+      - PMA_HOST=db
+      - PMA_ABSOLUTE_URI=http://127.0.0.1:{{PORT_PMA}}/
+      - UPLOAD_LIMIT=128M
+    networks:
+      - {{NETWORK_NAME}}
+    ports:
+      - 127.0.0.1:{{PORT_PMA}}:80
+    depends_on:
+      - db
+
+  redis:
+    image: redis:5-alpine
+    container_name: {{CONTAINER_PREFIX}}-redis
+    restart: always
+    networks:
+      {{NETWORK_NAME}}:
+        aliases:
+          - "redis"
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: {{CONTAINER_PREFIX}}-mailhog
+    restart: always
+    networks:
+      - {{NETWORK_NAME}}
+    ports:
+      - 127.0.0.1:{{PORT_MAILHOG}}:8025
+
+networks:
+  {{NETWORK_NAME}}:
+    name: {{NETWORK_NAME}}

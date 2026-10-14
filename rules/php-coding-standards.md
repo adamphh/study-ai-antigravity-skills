@@ -1,0 +1,127 @@
+# PHP Coding Standards & Formatting Invariants
+
+## 1. Strict Types Declaration
+Mỗi file `.php` khi được sinh mới hoặc tùy chỉnh phải khai báo `declare(strict_types=1);` ngay phía dưới khối comment Copyright Header, cách 1 dòng trống trước `namespace`:
+
+```php
+<?php
+/**
+ * Copyright © Magestore. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+declare(strict_types=1);
+
+namespace Magestore\FixBug\...;
+```
+
+## 2. No Class DocBlock / Comment Rule
+Tuyệt đối KHÔNG viết khối comment (DocBlock) cho `class`. Khai báo `class` trực tiếp ngay sau khối `use`.
+
+## 3. Customization Inline Comment Rule
+Luôn bổ sung comment bằng tiếng Anh giải thích đoạn code được tùy chỉnh/ghi đè so với class gốc, bao gồm logic gốc và logic tùy chỉnh mới.
+
+## 4. Magento 2 Realtime Reindex Observer Invariants
+Khi viết Observer cho các sự kiện Reindex dữ liệu realtime (Update on Save) sang Search Engine (Elasticsearch / OpenSearch):
+
+1. **Bắt buộc dùng Event `_commit_after`**:
+   - Luôn sử dụng sự kiện `_commit_after` (ví dụ: `sales_order_save_commit_after`, `catalog_product_save_commit_after`) thay vì `_save_after`.
+   - *Lý do*: Đảm bảo CSDL đã `COMMIT` giao dịch trước khi thực thi I/O request API sang Search Engine, tránh rủi ro kéo dài DB Transaction Lock và Stale Data Race Condition.
+
+2. **Bắt buộc bọc `try-catch` & Logger**:
+   - Khối reindex trong Observer BẮT BUỘC phải bọc trong `try { ... } catch (\Throwable $e) { $this->logger->error(...); }`.
+   - *Lý do*: Ngăn chặn việc dịch vụ Search Engine gặp sự cố tạm thời (timeout, connection refused) làm gián đoạn hoặc Rollback toàn bộ luồng tạo đơn hàng của khách.
+
+3. **Kiểm tra Indexer Mode (`!$indexer->isScheduled()`)**:
+   - Luôn sử dụng `Magento\Framework\Indexer\IndexerRegistry` kiểm tra `if (!$indexer->isScheduled())` trước khi gọi `executeList()`.
+   - *Lý do*: Đảm bảo chỉ reindex realtime khi hệ thống ở chế độ **Update on Save**, tránh chạy trùng lặp với mview cron khi ở chế độ **Update on Schedule**.
+
+## 5. Strict Indentation-Aware Line Length Check
+Khi tính độ dài dòng code:
+- Tổng số ký tự của một dòng = `Số khoảng trắng thụt lề (Leading Spaces) + Độ dài phần văn bản (Content Length)`.
+- Nếu tổng vượt quá 120 ký tự, BẮT BUỘC phải ngắt dòng (multiline wrap) đối với các tham số hàm, mảng, hoặc chuỗi log.
+
+## 6. End of File (EOF) Single Newline Rule
+Mỗi file code khi lưu BẮT BUỘC chỉ có chính xác 1 dòng trống / ký tự xuống dòng (1 newline) ở cuối file. Tuyệt đối không để thừa 2 hoặc nhiều dòng trống ở EOF để tránh cảnh báo PHPCS: `Expected 1 blank line at end of file; X found`.
+
+## 7. Magento 2 Extension Attributes Access Invariants
+Các class Extension Interface (như `ProductExtensionInterface`, `ItemExtensionInterface`, ...) được Magento sinh tự động từ `\Magento\Framework\Api\AbstractSimpleObject`, **KHÔNG kế thừa** từ `\Magento\Framework\DataObject`.
+- **Tuyệt đối KHÔNG** gọi `getData()` hoặc `setData()` trên đối tượng extension attributes.
+- **Bắt buộc** sử dụng getter/setter chuẩn dạng camelCase được sinh tự động theo khai báo attribute (ví dụ `getWorkStation()`, `setWorkStation($val)`) hoặc kiểm tra `method_exists()` trước khi gọi.
+
+## 8. No Empty Catch Block Rule
+Trong các khối `try ... catch (\Exception $e)` (hoặc `\Throwable $e` cho Observer/Critical I/O), TUYỆT ĐỐI KHÔNG để khối `catch` rỗng không có câu lệnh xử lý (gây cảnh báo PHPCS `Empty CATCH statement detected`). Phải ghi log lỗi qua `$this->logger->error(...)` hoặc có câu lệnh gán biến fallback (ví dụ `$result = null;`).
+
+## 9. OpenSearch & Elasticsearch Field Mapping & Filter Invariants
+Khi cấu hình hoặc phát triển tìm kiếm với OpenSearch/Elasticsearch trên Magento 2 & WebPOS:
+
+1. **Chuẩn hóa Field Mapping cho các bộ lọc chính xác (`term` / `terms` / `range`)**:
+   - Mọi trường dùng cho bộ lọc chính xác trong `search_request.xml` (như `stock_id`, `type_id`, `category_ids`, `barcode`) **BẮT BUỘC** phải được khai báo dạng `INTERNAL_DATA_TYPE_KEYWORD` hoặc `INTERNAL_DATA_TYPE_INT` trong Field Provider/Mapper.
+   - **Tuyệt đối KHÔNG** dùng `INTERNAL_DATA_TYPE_STRING` vì OpenSearch sẽ map thành `"type": "text"`. Trong OpenSearch, bộ lọc `term` / `terms` query chạy trên trường `text` sẽ bị sai lệch hoặc trả về 0 kết quả.
+
+2. **Rà soát thuộc tính `Use in Search` khi dùng trong `<match field="..."/>`**:
+   - Khi thêm bất kỳ trường nào vào mệnh đề `<match field="..."/>` trong `search_request.xml`, bắt buộc đảm bảo thuộc tính EAV tương ứng đã được bật `is_searchable = 1` (`Use in Search = Yes`).
+   - Nếu thuộc tính bị tắt `Use in Search`, OpenSearch sẽ ném lỗi Fatal HTTP 400 `Cannot search on field [xxx] since it is not indexed.` và Magento Search Adapter sẽ âm thầm trả về kết quả rỗng.
+
+## 10. Magento 2 Product Type Instance Retrieval Invariants
+Khi làm việc với Product Type (Simple, Configurable, Bundle, Grouped...) trong Observer/Plugin/Service:
+
+1. **Không gọi `getParentIdsByChild()` hay method nghiệp vụ trực tiếp trên `$productType->getTypes()`**:
+   - `$productType->getTypes()` (`\Magento\Catalog\Model\Product\Type::getTypes()`) chỉ trả về mảng metadata cấu hình (`array`), KHÔNG PHẢI đối tượng Type instance.
+   - Gọi trực tiếp method trên mảng này sẽ gây lỗi fatal: `Call to a member function getParentIdsByChild() on array`.
+
+2. **Quy chuẩn khởi tạo & truy xuất Type Instance**:
+   - **Trong Plugin:** Nếu class gốc (`$subject`) đã có method public cung cấp type instances (ví dụ `getProductTypeInstances()`), **BẮT BUỘC** ưu tiên gọi qua `$subject->getProductTypeInstances()`.
+   - **Khởi tạo độc lập:** Khi tự khởi tạo, bắt buộc dùng `ProductEmulator` DataObject kết hợp `$productType->factory($emulator)`:
+     ```php
+     $productEmulator = new \Magento\Framework\DataObject();
+     foreach (array_keys($this->productType->getTypes()) as $typeId) {
+         $productEmulator->setTypeId($typeId);
+         $this->productTypes[$typeId] = $this->productType->factory($productEmulator);
+     }
+     ```
+   - **Type Safety Check:** Luôn kiểm tra `is_object($typeInstance) && method_exists($typeInstance, 'methodName')` trước khi gọi thực thi.
+
+## 11. WebPOS Client Async Storage & Recursive Retry Invariants
+1. **Bắt buộc `await` các tác vụ I/O Database trong vòng lặp Sync**:
+   - Trong các Epic/Service đồng bộ dữ liệu (`requestData`, `SyncDataWithTypeEpic`, `updateItems`), các lệnh ghi IndexedDB như `service.saveToDb(items)` **BẮT BUỘC PHẢI CÓ `await`**.
+   - Việc không `await` trong vòng lặp lớn (nhiều trang) sẽ giải phóng hàng loạt unhandled write transaction song song lên Dexie, gây nghẽn hàng đợi (Transaction Queue Overload), lock contention và khiến tiến trình lưu bảng `sync` bị ngắt quãng/treo giữa chừng.
+
+2. **Tránh dùng toán tử Post-increment (`requestTime++`) trong hàm Retry đệ quy**:
+   - Khi viết hàm retry đệ quy xử lý lỗi IndexedDB/Fetch, **TUYỆT ĐỐI KHÔNG** truyền `requestTime++` (vì toán tử hậu tố truyền giá trị cũ trước khi tăng, khiến biến đếm lần thử không bao giờ đạt ngưỡng thoát `requestTime > 10`).
+   - Bắt buộc dùng `++requestTime` hoặc `requestTime + 1`.
+
+## 12. Input & Configuration Trimming / Sanitization Invariants
+Khi đọc các giá trị cấu hình (`ScopeConfigInterface`), tham số request (`RequestInterface`), hoặc xử lý chuỗi nhập liệu từ người dùng (đặc biệt là thông tin xác thực API, Payment Gateway, OAuth Credentials, Token, URLs):
+
+1. **Bắt buộc `trim()` dữ liệu chuỗi cấu hình & tham số xác thực**:
+   - Mọi giá trị cấu hình dạng chuỗi nhạy cảm (`client_id`, `client_secret`, `api_key`, `access_token`, `code`, `merchant_id`...) **BẮT BUỘC** phải được bọc qua `trim((string)$value)` trước khi đưa vào Payload gửi sang bên thứ 3 hoặc tính toán chữ ký số (Hash / HMAC / Signature).
+   - *Lý do*: Người dùng hoặc Admin thường vô tình copy thừa khoảng trắng ở đầu/cuối (`whitespace`), gây lỗi xác thực API cực kỳ khó phát hiện bằng mắt thường hoặc log thông thường.
+
+2. **Chuẩn hóa URL Base (`rtrim`)**:
+   - Đối với các cấu hình URL Endpoint/Base URL, luôn dùng `rtrim((string)$url, '/')` để loại bỏ dấu gạch chéo thừa ở cuối trước khi nối với đường dẫn API con (tránh lỗi double slash `//`).
+
+3. **Cú pháp mẫu chuẩn trong Service / Controller**:
+   ```php
+   $clientId = trim((string)$this->scopeConfig->getValue(
+       self::XML_PATH_CLIENT_ID,
+       ScopeInterface::SCOPE_WEBSITE,
+       $websiteId
+   ));
+   $clientSecret = trim((string)$this->encryptor->decrypt(
+       $this->scopeConfig->getValue(self::XML_PATH_CLIENT_SECRET, ScopeInterface::SCOPE_WEBSITE, $websiteId)
+   ));
+   $authCode = trim((string)($this->request->getParam('code') ?? ''));
+   ```
+
+## 13. Magento 2 Fresh Entity Reloading & State Sync Invariants
+Khi phát triển Plugin / Observer can thiệp hoặc đồng bộ trạng thái đơn hàng (Order State/Status) sau các thao tác ghi nhận giao dịch (Creditmemo, Invoice, Shipment):
+
+1. **Tránh Stale In-Memory Cache của `OrderRepository`**:
+   - `\Magento\Sales\Model\OrderRepository::get()` duy trì cache nội bộ (`$registry`). Sau khi một Creditmemo/Shipment/Invoice được lưu, entity Order trong `$registry` có thể chứa dữ liệu cũ chưa được cập nhật (`total_refunded`, `qty_refunded`, `state`...).
+   - **Bắt buộc**: Sử dụng `OrderFactory::create()->load($orderId)` để tải bản ghi mới nhất trực tiếp từ cơ sở dữ liệu khi cần kiểm tra trạng thái và cập nhật `state`/`status` đơn hàng.
+
+2. **Bảo toàn Order State Machine trong Item Plugins**:
+   - Khi viết Plugin can thiệp `Item::getQtyToShip()`, BẮT BUỘC phải kiểm tra điều kiện biên tuyệt đối: nếu `qty_ordered <= qty_refunded + qty_canceled` hoặc `qty_ordered <= qty_shipped + qty_canceled`, lập tức trả về `0.0`.
+   - Tránh việc trả về `qty_to_ship > 0` cho các item đã hoàn toàn bộ khiến Magento Core hiểu nhầm đơn hàng vẫn còn hàng để giao (`$order->canShip() === true`), gây kẹt trạng thái `processing`.
+

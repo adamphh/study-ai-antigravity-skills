@@ -1,0 +1,52 @@
+FROM {{PHP_IMAGE}}
+
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    libssl-dev \
+    libzip-dev \
+    zlib1g-dev \
+    libxml2-dev \
+    libxslt-dev \
+    libmcrypt-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libpng-dev \
+    libreadline-dev \
+    libicu-dev \
+    locales \
+    zip \
+    unzip \
+    nano \
+    sudo \
+    acl
+
+RUN apt-get -y autoremove
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd \
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install bcmath \
+    && docker-php-ext-install soap \
+    && docker-php-ext-install sockets \
+    && docker-php-ext-install xsl \
+    && docker-php-ext-install intl
+
+RUN pecl install redis \
+    && pecl install zip \
+    && docker-php-ext-enable redis \
+    && docker-php-ext-enable zip
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.2.18
+
+RUN curl -sSL https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 -o /usr/local/bin/mhsendmail \
+    && chmod +x /usr/local/bin/mhsendmail
+
+COPY ./sourceguardian/{{SG_FILE}} /usr/local/lib/php/extensions/{{EXT_DIR}}/
+
+RUN echo "[sourceguardian]" > /usr/local/etc/php/conf.d/sourceguardian.ini \
+    && echo "zend_extension=/usr/local/lib/php/extensions/{{EXT_DIR}}/{{SG_FILE}}" >> /usr/local/etc/php/conf.d/sourceguardian.ini
+
+WORKDIR /var/www
