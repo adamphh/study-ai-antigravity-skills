@@ -162,6 +162,7 @@ chmod +x "$TARGET_DIR/my-skills/adam-git-branch/scripts/prepare_branch.py"
 chmod +x "$TARGET_DIR/my-skills/adam-conflict-auditor/scripts/audit_conflict.py"
 chmod +x "$TARGET_DIR/my-skills/adam-plan-scaffold/scripts/scaffold_plan.py"
 chmod +x "$TARGET_DIR/my-skills/adam-code-linter/scripts/lint_diff.py"
+chmod +x "$TARGET_DIR/my-skills/adam-build/scripts/build_pos.py"
 
 ln -sf "$TARGET_DIR/scripts/index-refresh" "$HOME/.local/bin/index-refresh"
 ln -sf "$TARGET_DIR/scripts/setup-antigravity.sh" "$HOME/.local/bin/setup-antigravity"
@@ -170,6 +171,7 @@ ln -sf "$TARGET_DIR/my-skills/adam-git-branch/scripts/prepare_branch.py" "$HOME/
 ln -sf "$TARGET_DIR/my-skills/adam-conflict-auditor/scripts/audit_conflict.py" "$HOME/.local/bin/adam-conflict-auditor"
 ln -sf "$TARGET_DIR/my-skills/adam-plan-scaffold/scripts/scaffold_plan.py" "$HOME/.local/bin/adam-plan-scaffold"
 ln -sf "$TARGET_DIR/my-skills/adam-code-linter/scripts/lint_diff.py" "$HOME/.local/bin/adam-code-linter"
+ln -sf "$TARGET_DIR/my-skills/adam-build/scripts/build_pos.py" "$HOME/.local/bin/adam-build"
 
 echo -e "${GREEN}✓ All global symlinks configured successfully.${NC}"
 
